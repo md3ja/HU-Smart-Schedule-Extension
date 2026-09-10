@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HU Smart Schedule</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="header-top">
+        <div class="header-titles">
+          <h1>HU Smart Schedule</h1>
+          <p class="subtitle-primary">شوف جدولك قبل التسجيل</p>
+          <p class="subtitle-secondary">من تعارض لجدول مرتب</p>
+        </div>
+        <button id="openTab" class="btn-open-tab" type="button" title="فتح بصفحة كاملة">فتح بصفحة كاملة</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="two">
+        <label>
+          السنة
+          <input id="year" value="2026" inputmode="numeric">
+        </label>
+        <label>
+          الفصل
+          <select id="semester">
+            <option value="الأول">الأول</option>
+            <option value="الثاني">الثاني</option>
+            <option value="الصيفي">الصيفي</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        المواد — مادة بكل سطر
+        <textarea id="courses" rows="8" spellcheck="false">استرجاع المعلومات
+1910011423 | الحوسبة المتوازية والموزعة
+الروبوتات المتنقلة الذكية
+مشروع في علم البيانات والذكاء الاصطناعي (1)
+مختبر مقدمة في البرمجة
+القيادة والمسؤولية المجتمعية</textarea>
+      </label>
+      <p class="hint">تقدر تكتب رقم المادة، اسمها، أو: <b>رقم المادة | الاسم</b>.</p>
+    </section>
+
+    <section class="panel">
+      <h2>تفضيلات الجدول</h2>
+      <div class="two">
+        <label>
+          لا يبدأ قبل
+          <input id="notBefore" type="time" value="08:00">
+        </label>
+        <label>
+          لا ينتهي بعد
+          <input id="notAfter" type="time" value="18:00">
+        </label>
+      </div>
+
+      <label>
+        رتّب الاقتراحات حسب
+        <select id="ranking">
+          <option value="balanced">أيام أقل، ثم فراغات أقل، ثم بدء متأخر، ثم انتهاء مبكر</option>
+          <option value="days">أقل عدد أيام دوام</option>
+          <option value="gaps">أقل فراغات بين المحاضرات</option>
+          <option value="late">بدء متأخر قدر الإمكان</option>
+          <option value="earlyEnd">انتهاء مبكر قدر الإمكان</option>
+        </select>
+      </label>
+
+      <fieldset>
+        <legend>أيام ما بدي دوام فيها</legend>
+        <div class="days">
+          <label><input type="checkbox" class="offday" value="الأحد"> الأحد</label>
+          <label><input type="checkbox" class="offday" value="الاثنين"> الاثنين</label>
+          <label><input type="checkbox" class="offday" value="الثلاثاء"> الثلاثاء</label>
+          <label><input type="checkbox" class="offday" value="الأربعاء"> الأربعاء</label>
+          <label><input type="checkbox" class="offday" value="الخميس"> الخميس</label>
+        </div>
+      </fieldset>
+
+      <button id="run">اجلب الشعب وابنِ الجداول</button>
+      <p class="hint">أبقِ النافذة مفتوحة حتى انتهاء البحث؛ إغلاقها يوقف العملية.</p>
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="sectionsPanel" class="panel hidden">
+      <h2>كل الشعب والتواقيت</h2>
+      <div id="sections"></div>
+    </section>
+
+    <section id="conflictsPanel" class="panel hidden">
+      <h2>الشعب المتعارضة</h2>
+      <div id="sectionConflicts"></div>
+    </section>
+
+    <section id="schedulesPanel" class="panel hidden">
+      <h2>أفضل الجداول المقترحة</h2>
+      <div id="schedules"></div>
+    </section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
