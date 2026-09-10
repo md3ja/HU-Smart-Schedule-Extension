@@ -1,66 +1,116 @@
+<div align="center">
+
+<img src="images/icon-128.png" alt="HU Smart Schedule icon" width="96" height="96">
+
 # HU Smart Schedule
 
-**شوف جدولك قبل التسجيل**  
-*من تعارض لجدول مرتب*
+### See your schedule before registration.
+**From conflicts to a clean schedule.**
 
-إضافة لمتصفح Google Chrome تساعد طلبة الجامعة الهاشمية على تنظيم وبناء جداولهم الدراسية بسهولة، وفحص التعارضات، واقتراح أفضل الجداول المتوافقة مع تفضيلاتهم.
+<br>
 
----
+**English** | [العربية](README_AR.md)
 
-## المميزات الرئيسية
+</div>
 
-تساعدك إضافة **HU Smart Schedule** في:
-
-- **البحث عن المواد**: البحث باستخدام اسم المادة أو رقمها الجامعي مباشرة.
-- **جلب الشعب المتاحة**: استرجاع بيانات الشعب والمواعيد والمدرسين المعلنة حاليًا.
-- **اكتشاف تعارضات المحاضرات**: فحص دقيق وشامل لأي تداخل بين أوقات الشعب مع إبراز أوقات التعارض.
-- **إنشاء اقتراحات جداول خالية من التعارض**: توليد تركيبات متكاملة تغطي جميع المواد المطلوبة بدون أي تضارب زمني.
-- **ترتيب الجداول حسب تفضيلات الطالب**: فرز الجداول حسب أقل أيام دوام، أقل Break، بدء متأخر، أو انتهاء مبكر.
-- **عرض الجدول الأسبوعي من الأحد إلى الخميس**: تقويم بصري منظم لأيام الأسبوع الجامعي مع تمييز المحاضرات بألوان واضحة.
-- **حساب Break**: حساب Break بين المحاضرات الوجاهية المتتالية في نفس اليوم.
-- **التعامل مع المحاضرات الوجاهية وعن بُعد**: تمييز المحاضرات الوجاهية والمدمجة والمحاضرات التي تُدرّس عن بُعد بوضوح.
-- **تصدير الجداول إلى PDF / Print**: حفظ وطباعة تقارير منظمة ومجهزة بحجم A4 تتضمن تفاصيل الجدول والتقويم والشعب.
-- **نسخ معلومات الجدول**: نسخ سريع لبيانات الشعب والمواعيد بنقرة واحدة.
+HU Smart Schedule is a Chrome extension built for Hashemite University students to explore course sections, detect timetable conflicts, and generate schedules that match their preferences.
 
 ---
 
-## طريقة التثبيت على Google Chrome
+## See it in action
 
-1. قم بتنزيل (Download) أو استنساخ (Clone) المستودع إلى جهازك.
-2. افتح متصفح Google Chrome وانتقل إلى صفحة الإضافات عبر الرابط:
-   ```text
-   chrome://extensions
-   ```
-3. فعّل **وضع مطوّر البرامج (Developer mode)** من الزر الموجود في الزاوية العلوية.
-4. اضغط على زر **تحميل إضافة تم فك حزمتها (Load unpacked)**.
-5. اختر مجلد الإضافة (HU-Smart-Schedule-Public).
-6. ستظهر أيقونة **HU Smart Schedule** في شريط أدوات المتصفح، جاهزة للاستخدام.
+![See it in action](docs/demo/generate-full-schedule.gif)
+
+Enter your courses, set your preferences, and let HU Smart Schedule generate conflict-free timetable options for you.
 
 ---
 
-## سهولة الاستخدام والوصول
+## Features
 
-- **بدون تسجيل دخول**: لا حاجة لتسجيل الدخول إلى بوابة الطالب أو إدخال أي بيانات اعتماد جامعية.
-- **الوصول المباشر**: تتصل الإضافة بصفحات جريدة المواد المتاحة للعموم على موقع الجامعة الهاشمية مباشرة.
-- **العمل من أي تبويب**: يمكن فتح واستخدام الإضافة من أي صفحة أو تبويب داخل متصفح Chrome دون الحاجة لفتح موقع الجامعة أولاً.
-- **لا تُطلب بيانات سرية**: لا يتم طلب أو جمع أو تخزين أي اسم مستخدم أو كلمة مرور على الإطلاق.
-
----
-
-## الخصوصية (Privacy)
-
-- **استعلامات مباشرة ومحدودة**: يتم إرسال طلبات البحث عن المواد حصريًا إلى صفحات جريدة المواد العامة في الجامعة الهاشمية.
-- **بدون كلمات مرور**: لا تطلب الإضافة أي كلمات مرور إطلاقًا.
-- **حماية البيانات الشخصية**: لا يتم جمع أو تخزين أو مشاركة أي معلومات شخصية أو حسابات طلابية.
-- **معالجة محلية بالكامل**: تجري جميع عمليات فحص التعارضات، وحساب Break، وتوليد واقتراح الجداول محليًا داخل الإضافة في متصفحك.
-
----
-
-## إخلاء مسؤولية
-
-HU Smart Schedule هو مشروع مستقل، ولا يتبع للجامعة الهاشمية، ولا يمثلها رسميًا، ولم يتم اعتماده أو المصادقة عليه من قبل الجامعة.
+- Search by course name or course number
+- Fetch currently published sections, instructors, days, and times
+- Automatically detect timetable conflicts
+- Generate conflict-free schedule combinations
+- Rank schedule suggestions by:
+  - fewer campus days
+  - less Break
+  - later start
+  - earlier finish
+  - balanced preference
+- Sunday–Thursday weekly calendar
+- Calculate Break between consecutive in-person classes on the same day
+- Online classes still participate in timetable conflict detection
+- Full-page planner mode
+- Copy schedule information
+- Export schedules to A4 PDF / Print
 
 ---
 
-**Version**: 1.0.1  
-**Copyright**: Copyright © 2026. All rights reserved.
+## Quick course search
+
+![Quick course search](docs/demo/search-single-course.gif)
+
+Search by course name or number and view available sections, instructors, days, and times.
+
+---
+
+## How it works
+
+1. Enter your course names or course numbers
+2. Select the academic year and semester
+3. Set optional timetable preferences
+4. Generate and compare schedule suggestions
+
+HU Smart Schedule connects directly to the publicly available Hashemite University course schedule pages.
+
+No student portal login is required.
+
+---
+
+## Installation
+
+![Installation](docs/demo/install-extension.gif)
+
+1. Download or clone this repository
+2. Open `chrome://extensions`
+3. Enable **Developer mode**
+4. Click **Load unpacked**
+5. Select the downloaded repository folder
+6. Pin **HU Smart Schedule** from the Chrome extensions menu
+
+After installation, the extension can be opened from any normal Chrome tab.
+
+---
+
+## PDF / Print export
+
+![PDF / Print export](docs/demo/export-pdf-report.gif)
+
+Export a schedule as a clean A4 report or save it directly as PDF using Chrome's print dialog.
+
+---
+
+## Important note
+
+Course and section information is based on the data currently published by Hashemite University and may change. Always confirm final section availability in the official registration system before registering.
+
+---
+
+## Privacy
+
+- No username or password is requested
+- No student account information is collected
+- Course searches are sent only to the public Hashemite University course schedule pages
+- Conflict detection, Break calculation, ranking, and schedule generation run locally inside the extension
+
+---
+
+## Disclaimer
+
+HU Smart Schedule is an independent project. It is not affiliated with, endorsed by, officially connected to, or approved by Hashemite University.
+
+---
+
+Version: **1.0.1**
+
+Copyright © 2026. All rights reserved.
