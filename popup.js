@@ -420,7 +420,11 @@ function matchCourseRows(course, parsed) {
   const identities = new Set(rows.map(row => cleanText(row[numberIdx]) || nameKey(row[nameIdx])));
   if (identities.size > 1) {
     const names = [...new Set(rows.map(row => row[numberIdx] + ' — ' + row[nameIdx]))];
-    throw new Error('الاسم يطابق أكثر من مادة؛ استخدم رقم المادة:\n' + names.join('\n'));
+    const error = new Error('الاسم يطابق أكثر من مادة؛ استخدم رقم المادة:\n' + names.join('\n'));
+    error.courseCandidates = [...new Map(rows.map(row => [cleanText(row[numberIdx]), {
+      courseNumber: arabicDigitsToAscii(cleanText(row[numberIdx])), officialName: cleanText(row[nameIdx])
+    }])).values()].filter(c => /^\d{6,}$/.test(c.courseNumber));
+    throw error;
   }
   return rows;
 }
@@ -496,6 +500,101 @@ async function searchCourse(course, year, semester, serverQuery = course.query) 
     return searchCourse(course, year, semester, firstWord);
   }
   return {...course, headers, rows: matched};
+}
+
+let smartSearchIndexPromise;
+async function getSmartSearchIndex() {
+  if (!smartSearchIndexPromise) {
+    const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL
+      ? chrome.runtime.getURL('smart-search-catalog.json') : 'smart-search-catalog.json';
+    smartSearchIndexPromise = fetch(url).then(response => {
+      if (!response.ok) throw new Error('تعذر تحميل فهرس المواد.');
+      return response.json();
+    }).then(data => HUSmartSearch.createIndex(data)).catch(error => {
+      smartSearchIndexPromise = null;
+      throw error;
+    });
+  }
+  return smartSearchIndexPromise;
+}
+
+function chooseSmartCourse(query, candidates, mode = 'ambiguous') {
+  if (!candidates.length) return Promise.resolve(null);
+  const panel = $('smartSearchChoice'), options = $('smartSearchOptions');
+  $('smartSearchTitle').textContent = mode === 'suggestions' ? 'اقتراحات — اختر المادة المقصودة' : 'حدد المادة المقصودة';
+  $('smartSearchPrompt').textContent = `البحث: ${query}. ` + (mode === 'ambiguous_alias'
+    ? 'هذا الاختصار غير معتمد للاختيار التلقائي. راجع الاسم والرقم قبل المتابعة.'
+    : 'لن يستمر البحث إلا بعد اختيارك؛ يمكنك الإلغاء وتعديل الاسم أو الرقم.');
+  options.replaceChildren();
+  panel.classList.remove('hidden');
+  return new Promise(resolve => {
+    const finish = course => {
+      panel.classList.add('hidden');
+      options.replaceChildren();
+      $('smartSearchCancel').onclick = null;
+      resolve(course);
+    };
+    for (const course of candidates) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.courseNumber = course.courseNumber;
+      const name = document.createElement('strong');
+      name.textContent = course.officialName;
+      const number = document.createElement('bdi');
+      number.textContent = course.courseNumber;
+      button.append(name, number);
+      if (course.context?.length) {
+        const context = document.createElement('small');
+        context.textContent = course.context.join(' / ');
+        button.append(context);
+      }
+      button.onclick = () => finish(course);
+      options.append(button);
+    }
+    $('smartSearchCancel').onclick = () => finish(null);
+    options.querySelector('button')?.focus();
+  });
+}
+
+async function searchSmartCourse(course, year, semester) {
+  let index;
+  try { index = await getSmartSearchIndex(); }
+  catch (error) {
+    // Without the catalog we cannot distinguish Arabic aliases from official names safely.
+    if (course.kind !== 'number') throw new Error('تعذر تحميل فهرس المواد؛ أعد المحاولة أو استخدم رقم المادة مباشرة.');
+  }
+  let resolution = index ? HUSmartSearch.resolve(index, course.query) : {state: 'unknown', suggestions: []};
+  if (course.kind === 'number') resolution = {state: 'resolved', courseNumber: course.query, course: index?.byNumber.get(course.query)};
+  if (resolution.state === 'ambiguous' || resolution.suggestions?.length) {
+    const chosen = await chooseSmartCourse(course.query, resolution.candidates || resolution.suggestions,
+      resolution.state === 'ambiguous' ? resolution.match : 'suggestions');
+    if (!chosen) return {...course, headers: [], rows: [], searchState: resolution.state,
+      searchMessage: 'لم يتم اختيار مادة؛ أدخل الاسم الرسمي أو رقم المادة.'};
+    resolution = {state: 'resolved', courseNumber: chosen.courseNumber, course: chosen};
+  }
+  if (resolution.state !== 'resolved' && (resolution.reviewRequired || !/[\u0600-\u06ff]/.test(course.query) || course.query.length < 3)) {
+    return {...course, headers: [], rows: [], searchState: 'unknown', searchMessage: resolution.reviewRequired
+      ? 'الاختصار غير معتمد بعد؛ استخدم الاسم الرسمي أو رقم المادة.' : 'لم أجد تطابقًا آمنًا؛ استخدم الاسم الرسمي أو رقم المادة.'};
+  }
+  const request = resolution.state === 'resolved'
+    ? {...course, kind: 'number', query: resolution.courseNumber, label: resolution.course?.officialName || course.label}
+    : course;
+  let result;
+  try { result = await searchCourse(request, year, semester); }
+  catch (error) {
+    if (!error.courseCandidates?.length) throw error;
+    const chosen = await chooseSmartCourse(course.query, error.courseCandidates.map(c => index?.byNumber.get(c.courseNumber) || c));
+    if (!chosen) return {...course, headers: [], rows: [], searchState: 'ambiguous', searchMessage: 'لم يتم اختيار مادة.'};
+    resolution = {course: index?.byNumber.get(chosen.courseNumber) || chosen};
+    result = await searchCourse({...course, kind: 'number', query: chosen.courseNumber, label: chosen.officialName}, year, semester);
+  }
+  result.searchState = HUSmartSearch.liveState(resolution.course, result.rows);
+  if (result.searchState === 'known_not_offered') {
+    result.searchMessage = 'المادة معروفة، لكنها غير مطروحة في الفصل المحدد.';
+    const hint = HUSmartSearch.historicalHint(resolution.course);
+    if (hint) result.searchMessage += ' ' + hint;
+  } else if (result.searchState === 'unknown') result.searchMessage = 'لا توجد نتائج مطابقة؛ لم يتم تأكيد المادة في الفصل المحدد.';
+  return result;
 }
 
 
@@ -1435,7 +1534,7 @@ async function run() {
     }
     const requested = new Set();
     for (const course of courses) {
-      const key = course.kind + ':' + nameKey(course.query);
+      const key = course.kind + ':' + HUSmartSearch.normalize(course.query);
       if (requested.has(key)) throw new Error('المادة مكررة: ' + course.label);
       requested.add(key);
     }
@@ -1452,7 +1551,7 @@ async function run() {
       setStatus(`جاري البحث ${i + 1}/${courses.length}: ${course.label}`);
 
       try {
-        results.push(await searchCourse(course, year, semester));
+        results.push(await searchSmartCourse(course, year, semester));
       } catch (error) {
         results.push({...course, headers: [], rows: [], error: error.message});
       }
@@ -1465,7 +1564,7 @@ async function run() {
       const sections = buildSections(result);
 
       if (!sections.length) {
-        missing.push(result.label + (result.error ? ': ' + result.error : ' — لا توجد نتائج مطابقة'));
+        missing.push(result.label + (result.error ? ': ' + result.error : ' — ' + (result.searchMessage || 'لا توجد نتائج مطابقة')));
         allSections.set(result.original, []);
       } else {
         allSections.set(result.original, sections);

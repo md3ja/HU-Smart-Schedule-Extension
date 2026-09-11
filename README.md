@@ -59,6 +59,12 @@ No student portal login is required.
 
 ---
 
+## 🔎 Smart Search v1
+
+Smart Search v1 matches course names and numbers locally against a bundled catalog of 3,203 courses, with Arabic normalization. Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require a course choice; Java, جافا, C++, AI, and ROS are not automatically resolved. A known course without sections in the selected semester is shown as not offered. Historical semester hints are guidance, not a guarantee of future availability.
+
+Smart Search matching runs locally. Live semester sections are fetched directly from hu.edu.jo using the selected course number, academic year, and semester; unresolved Arabic name searches may use HU’s name-search service. No intermediary backend or analytics is used.
+
 ## 🔎 Quick course search
 
 ![Quick course search](docs/demo/search-single-course.gif)
@@ -105,6 +111,7 @@ Always confirm final section availability in the official registration system be
 - No student account information is collected
 - Course searches are sent only to public Hashemite University schedule pages
 - Conflict detection, Break calculation, ranking, and schedule generation run locally inside the extension
+- Read the complete [Privacy Policy](PRIVACY.md)
 
 ---
 
@@ -118,7 +125,7 @@ It is not affiliated with, endorsed by, officially connected to, or approved by 
 
 <div align="center">
 
-**Version 1.0.1**
+**Version 1.1.0**
 
 Copyright © 2026. All rights reserved.
 

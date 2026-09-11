@@ -85,6 +85,12 @@
       <button id="run">اجلب الشعب وابنِ الجداول</button>
       <p class="hint">أبقِ النافذة مفتوحة حتى انتهاء البحث؛ إغلاقها يوقف العملية.</p>
       <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="smartSearchChoice" class="smart-search-choice hidden" role="group" aria-labelledby="smartSearchTitle">
+        <h3 id="smartSearchTitle"></h3>
+        <p id="smartSearchPrompt"></p>
+        <div id="smartSearchOptions" class="smart-search-options"></div>
+        <button id="smartSearchCancel" type="button">إلغاء اختيار هذه المادة</button>
+      </div>
     </section>
 
     <section id="sectionsPanel" class="panel hidden">
@@ -103,6 +109,7 @@
     </section>
   </main>
 
+  <script src="smart-search.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

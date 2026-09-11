@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
+  "default_locale": "en",
   "name": "HU Smart Schedule",
-  "version": "1.0.1",
-  "description": "يعرض شعب مواد الجامعة الهاشمية ويقترح جداول بدون تعارض حسب الوقت والأيام.",
+  "version": "1.1.0",
+  "description": "__MSG_appDesc__",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
