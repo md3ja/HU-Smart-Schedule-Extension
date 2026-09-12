@@ -1,4 +1,4 @@
-# Chrome Web Store Submission Checklist — HU Smart Schedule v1.1.0
+# Chrome Web Store Submission Checklist — HU Smart Schedule v1.2.0
 
 Use this checklist while completing the submission on the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
 
@@ -15,7 +15,7 @@ Use this checklist while completing the submission on the [Chrome Web Store Deve
 ## 2. Store Listing Configuration
 
 - [ ] **Package Uploaded**: Uploaded verified production ZIP:
-  `HU-Smart-Schedule-v1.1.0.zip`
+  `HU-Smart-Schedule-v1.2.0.zip`
 - [ ] **Extension Title**: `HU Smart Schedule`
 - [ ] **Summary (Short Description)**:
   `Plan Hashemite University schedules with course search, conflict detection, timetable generation, Break calculation, and PDF export.` (129 / 132 characters)
@@ -66,8 +66,8 @@ Use this checklist while completing the submission on the [Chrome Web Store Deve
 
 ## 6. Final Review & Submission
 
-- [ ] Verify v1.1.0 Smart Search, the 3,203-course catalog, NLP / Calc 1, ambiguity choices, and known-but-not-offered messages.
-- [ ] Review existing screenshots against v1.1.0; replace outdated views before submission if needed.
+- [ ] Verify v1.2.0 Smart Search, the 3,203-course catalog, NLP / Calc 1, ambiguity choices, and known-but-not-offered messages.
+- [ ] Review existing screenshots against v1.2.0; replace outdated views before submission if needed.
 - [ ] Confirm local matching and direct HU section requests are accurately disclosed; no backend or analytics.
 
 - [ ] Previewed the store listing in the dashboard to ensure formatting and imagery are crisp.

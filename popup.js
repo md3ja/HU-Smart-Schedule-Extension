@@ -401,7 +401,25 @@ function nameKey(value) {
     .replace(/(^|\s)و\s+/g, '$1و').replace(/\s+/g, ' ').trim();
 }
 
-function matchCourseRows(course, parsed) {
+function groupCourseCandidates(headers, rows, index) {
+  const numberIdx = findColumn(headers, ['رقم المادة', 'course number', 'course no']);
+  const nameIdx = findColumn(headers, ['اسم المادة', 'course name']);
+  const groups = new Map();
+  for (const row of rows) {
+    const courseNumber = arabicDigitsToAscii(cleanText(row[numberIdx]));
+    if (!/^\d{6,}$/.test(courseNumber)) throw new Error('رقم مادة غير صالح في نتائج الجامعة.');
+    const title = cleanText(row[nameIdx]);
+    const base = title.replace(/\s*\/\s*(?:عملي|نظري)\s*$/, '').trim();
+    if (!groups.has(courseNumber)) groups.set(courseNumber, {
+      courseNumber, officialName: base, ...index?.byNumber.get(courseNumber), offered: true, components: []
+    });
+    const candidate = groups.get(courseNumber);
+    if (!candidate.components.includes(title)) candidate.components.push(title);
+  }
+  return [...groups.values()];
+}
+
+function matchCourseRows(course, parsed, collectCandidates = false) {
   const numberIdx = findColumn(parsed.headers, ['رقم المادة', 'course number', 'course no']);
   const nameIdx = findColumn(parsed.headers, ['اسم المادة', 'course name']);
   if (!parsed.rows.length) return [];
@@ -416,20 +434,18 @@ function matchCourseRows(course, parsed) {
   }
   const query = nameKey(course.query);
   const exact = parsed.rows.filter(row => nameKey(row[nameIdx]) === query);
-  const rows = exact.length ? exact : parsed.rows.filter(row => nameKey(row[nameIdx]).includes(query));
+  const rows = exact.length && !collectCandidates ? exact : parsed.rows.filter(row => nameKey(row[nameIdx]).includes(query));
   const identities = new Set(rows.map(row => cleanText(row[numberIdx]) || nameKey(row[nameIdx])));
-  if (identities.size > 1) {
+  if (identities.size > 1 && !collectCandidates) {
     const names = [...new Set(rows.map(row => row[numberIdx] + ' — ' + row[nameIdx]))];
     const error = new Error('الاسم يطابق أكثر من مادة؛ استخدم رقم المادة:\n' + names.join('\n'));
-    error.courseCandidates = [...new Map(rows.map(row => [cleanText(row[numberIdx]), {
-      courseNumber: arabicDigitsToAscii(cleanText(row[numberIdx])), officialName: cleanText(row[nameIdx])
-    }])).values()].filter(c => /^\d{6,}$/.test(c.courseNumber));
+    error.courseCandidates = groupCourseCandidates(parsed.headers, rows);
     throw error;
   }
   return rows;
 }
 
-async function searchCourse(course, year, semester, serverQuery = course.query) {
+async function searchCourse(course, year, semester, serverQuery = course.query, collectCandidates = false) {
   let url = course.kind === 'number' ? URL_BY_NUMBER : URL_BY_NAME;
   let doc;
   try { doc = await fetchDoc(url); }
@@ -492,12 +508,12 @@ async function searchCourse(course, year, semester, serverQuery = course.query) 
     currentPage++;
   }
   const parsed = {headers, rows};
-  const matched = matchCourseRows(course, parsed);
+  const matched = matchCourseRows(course, parsed, collectCandidates);
   // HU's server search is spelling-sensitive (ة/ه, attached/separate و).
   // One broader request is filtered against the ORIGINAL name, never accepted wholesale.
   const firstWord = cleanText(course.query).split(' ')[0];
   if (!matched.length && course.kind === 'name' && serverQuery === course.query && firstWord !== course.query) {
-    return searchCourse(course, year, semester, firstWord);
+    return searchCourse(course, year, semester, firstWord, collectCandidates);
   }
   return {...course, headers, rows: matched};
 }
@@ -543,6 +559,12 @@ function chooseSmartCourse(query, candidates, mode = 'ambiguous') {
       const number = document.createElement('bdi');
       number.textContent = course.courseNumber;
       button.append(name, number);
+      if (typeof course.offered === 'boolean') {
+        const availability = document.createElement('small');
+        availability.className = course.offered ? 'availability-offered' : 'availability-missing';
+        availability.textContent = course.offered ? 'متاح هذا الفصل' : 'غير مطروح في هذا الفصل';
+        button.append(availability);
+      }
       if (course.context?.length) {
         const context = document.createElement('small');
         context.textContent = course.context.join(' / ');
@@ -560,44 +582,51 @@ async function searchSmartCourse(course, year, semester) {
   let index;
   try { index = await getSmartSearchIndex(); }
   catch (error) {
-    // Without the catalog we cannot distinguish Arabic aliases from official names safely.
     if (course.kind !== 'number') throw new Error('تعذر تحميل فهرس المواد؛ أعد المحاولة أو استخدم رقم المادة مباشرة.');
   }
   let resolution = index ? HUSmartSearch.resolve(index, course.query) : {state: 'unknown', suggestions: []};
   if (course.kind === 'number') resolution = {state: 'resolved', courseNumber: course.query, course: index?.byNumber.get(course.query)};
-  if (resolution.state === 'ambiguous' || resolution.suggestions?.length) {
-    const chosen = await chooseSmartCourse(course.query, resolution.candidates || resolution.suggestions,
-      resolution.state === 'ambiguous' ? resolution.match : 'suggestions');
-    if (!chosen) return {...course, headers: [], rows: [], searchState: resolution.state,
-      searchMessage: 'لم يتم اختيار مادة؛ أدخل الاسم الرسمي أو رقم المادة.'};
+  // Approved aliases have an explicit identity. All other names use both sources.
+  if (course.kind !== 'number' && resolution.match !== 'approved_alias') {
+    let live;
+    try {
+      const found = await searchCourse(course, year, semester, course.query, true);
+      live = groupCourseCandidates(found.headers, found.rows, index);
+    } catch (error) {
+      if (!error.courseCandidates) throw error;
+      live = error.courseCandidates.map(c => ({...c, ...index.byNumber.get(c.courseNumber), offered: true}));
+    }
+    const local = resolution.course ? [resolution.course] : resolution.candidates || resolution.suggestions || [];
+    const merged = new Map(live.map(c => [c.courseNumber, c]));
+    // Absence from a spelling-sensitive name response is not proof of non-offering.
+    // Verify catalog-only candidates by number before assigning availability badges.
+    for (const candidate of local) {
+      if (merged.has(candidate.courseNumber)) continue;
+      const verified = await searchCourse({...course, kind: 'number', query: candidate.courseNumber}, year, semester);
+      merged.set(candidate.courseNumber, {...candidate, offered: verified.rows.length > 0});
+    }
+    const fullNameMatch = candidate => HUSmartSearch.normalize(candidate.officialName) === HUSmartSearch.normalize(course.query);
+    const candidates = [...merged.values()].sort((a,b) => Number(fullNameMatch(b))-Number(fullNameMatch(a)) || Number(b.offered)-Number(a.offered) || a.courseNumber.localeCompare(b.courseNumber));
+    const exact = candidates.filter(fullNameMatch);
+    const forceChoice = resolution.match === 'ambiguous_alias' || resolution.reviewRequired;
+    let chosen;
+    if (exact.length === 1 && !forceChoice) chosen = exact[0];
+    else if (candidates.length) chosen = await chooseSmartCourse(course.query, candidates, resolution.match);
+    if (!chosen) return {...course, headers: [], rows: [], searchState: candidates.length ? 'ambiguous' : 'unknown',
+      searchMessage: candidates.length ? 'لم يتم اختيار مادة؛ أدخل الاسم الرسمي أو رقم المادة.' : 'لم أجد تطابقًا آمنًا؛ استخدم الاسم الرسمي أو رقم المادة.'};
     resolution = {state: 'resolved', courseNumber: chosen.courseNumber, course: chosen};
   }
-  if (resolution.state !== 'resolved' && (resolution.reviewRequired || !/[\u0600-\u06ff]/.test(course.query) || course.query.length < 3)) {
-    return {...course, headers: [], rows: [], searchState: 'unknown', searchMessage: resolution.reviewRequired
-      ? 'الاختصار غير معتمد بعد؛ استخدم الاسم الرسمي أو رقم المادة.' : 'لم أجد تطابقًا آمنًا؛ استخدم الاسم الرسمي أو رقم المادة.'};
-  }
-  const request = resolution.state === 'resolved'
-    ? {...course, kind: 'number', query: resolution.courseNumber, label: resolution.course?.officialName || course.label}
-    : course;
-  let result;
-  try { result = await searchCourse(request, year, semester); }
-  catch (error) {
-    if (!error.courseCandidates?.length) throw error;
-    const chosen = await chooseSmartCourse(course.query, error.courseCandidates.map(c => index?.byNumber.get(c.courseNumber) || c));
-    if (!chosen) return {...course, headers: [], rows: [], searchState: 'ambiguous', searchMessage: 'لم يتم اختيار مادة.'};
-    resolution = {course: index?.byNumber.get(chosen.courseNumber) || chosen};
-    result = await searchCourse({...course, kind: 'number', query: chosen.courseNumber, label: chosen.officialName}, year, semester);
-  }
+  const request = {...course, kind: 'number', query: resolution.courseNumber, label: resolution.course?.officialName || course.label};
+  const result = await searchCourse(request, year, semester);
+  result.resolvedCourseNumber = resolution.courseNumber;
+  result.canonicalName = resolution.course?.officialName;
   result.searchState = HUSmartSearch.liveState(resolution.course, result.rows);
   if (result.searchState === 'known_not_offered') {
     result.searchMessage = 'المادة معروفة، لكنها غير مطروحة في الفصل المحدد.';
-    const hint = HUSmartSearch.historicalHint(resolution.course);
-    if (hint) result.searchMessage += ' ' + hint;
+    result.historicalHint = HUSmartSearch.historicalHint(resolution.course);
   } else if (result.searchState === 'unknown') result.searchMessage = 'لا توجد نتائج مطابقة؛ لم يتم تأكيد المادة في الفصل المحدد.';
   return result;
 }
-
-
 
 // ----------------------------- Meeting parsing -----------------------------
 
@@ -763,7 +792,7 @@ function buildSections(courseResult) {
     if (!section) { details.complete = false; details.warnings.push('رقم الشعبة مفقود'); }
     const key = detectedNumber + '|' + (section || 'unknown-' + idx);
     if (!groups.has(key)) groups.set(key, {
-      courseKey: courseResult.original, courseLabel: detectedName || courseResult.label || courseResult.query,
+      courseKey: courseResult.original, courseLabel: courseResult.canonicalName || detectedName || courseResult.label || courseResult.query,
       query: courseResult.query, section: section || 'غير معروفة', courseNumber: detectedNumber,
       detectedName, meetings: [], warnings: [], complete: true, instructors: [], cells, headers, raw: ''
     });
@@ -995,22 +1024,23 @@ function compareSchedules(a, b, ranking = 'balanced') {
   return order.map(k => comparisons[k]).find(n => n !== 0) || 0;
 }
 
-function generateSchedules(courseSections, prefs, maxResults = 80, maxNodes = 50000) {
+function generateSchedules(courseSections, prefs, maxResults = 80, maxNodes = 50000, maxCandidates = 5000) {
   const courseKeys = [...courseSections.keys()].sort((a,b) => courseSections.get(a).length-courseSections.get(b).length);
-  const results = [];
+  const candidates = [];
   let nodes = 0, truncated = false, totalFound = 0;
   function dfs(index, chosen) {
     if (nodes >= maxNodes) { truncated = true; return; }
     nodes++;
     if (index === courseKeys.length) {
+      if (candidates.length >= maxCandidates) { truncated = true; return; }
       totalFound++;
-      results.push({sections: [...chosen], metrics: scheduleMetrics(chosen)});
-      results.sort((a,b) => compareSchedules(a,b,prefs.ranking));
-      if (results.length > maxResults) results.pop();
+      candidates.push({sections: [...chosen], metrics: scheduleMetrics(chosen)});
       return;
     }
     for (const section of courseSections.get(courseKeys[index])) {
       if (truncated) break;
+      if (nodes >= maxNodes) { truncated = true; break; }
+      nodes++; // Bound rejected/conflicting branches too, not only recursive visits.
       if (!isAllowed(section,prefs) || sectionConflicts(section,chosen)) continue;
       if (section.meetings.some((m,i) => section.meetings.slice(i+1).some(n => conflicts(m,n)))) continue;
       if (chosen.some(s => s.courseNumber && s.courseNumber === section.courseNumber)) continue;
@@ -1018,6 +1048,9 @@ function generateSchedules(courseSections, prefs, maxResults = 80, maxNodes = 50
     }
   }
   if (courseKeys.length) dfs(0, []);
+  candidates.sort((a,b) => compareSchedules(a,b,prefs.ranking));
+  const results = candidates.slice(0, maxResults);
+  results.candidates = candidates;
   results.truncated = truncated;
   results.nodes = nodes;
   results.totalFound = totalFound;
@@ -1068,6 +1101,102 @@ function sectionTimingLabel(section) {
 
 let currentAllSections = new Map();
 let currentSchedules = [];
+let candidateSchedules = [];
+let availableBreaks = [];
+let candidateSetTruncated = false;
+const BREAK_GROUPS = [
+  {id: 'stt', days: ['الأحد', 'الثلاثاء', 'الخميس'], anchor: 510, step: 60},
+  {id: 'mw', days: ['الاثنين', 'الأربعاء'], anchor: 480, step: 90}
+];
+const groupBreakCache = new WeakMap();
+
+function groupBreakIntervals(schedule, group) {
+  let cache = groupBreakCache.get(schedule);
+  if (!cache) { cache = new Map(); groupBreakCache.set(schedule, cache); }
+  if (cache.has(group.id)) return cache.get(group.id);
+  // An inactive/remote-only day does not promise campus attendance or a campus break.
+  const days = group.days.filter(day => schedule.metrics.byDay.get(day)?.some(m => !m.remote));
+  if (!days.length) { cache.set(group.id, []); return []; }
+  let shared = schedule.metrics.campusBreaksByDay.get(days[0]) || [];
+  for (const day of days.slice(1)) {
+    const next = schedule.metrics.campusBreaksByDay.get(day) || [];
+    shared = shared.flatMap(a => next.map(b => ({start: Math.max(a.start,b.start), end: Math.min(a.end,b.end)})))
+      .filter(interval => interval.end > interval.start);
+  }
+  cache.set(group.id, shared);
+  return shared;
+}
+
+function supportsBreak(schedule, option) {
+  const group = BREAK_GROUPS.find(g => g.id === option.group);
+  return !!group && groupBreakIntervals(schedule, group).some(interval => interval.start <= option.start && interval.end >= option.end);
+}
+
+function extractAvailableBreaks(schedules) {
+  const options = new Map();
+  const add = (group, start, end) => {
+    const key = `${group.id}:${start}:${end}`;
+    if (!options.has(key)) options.set(key, {key, group: group.id, start, end, count: 0});
+  };
+  for (const schedule of schedules) {
+    for (const group of BREAK_GROUPS) {
+      for (const interval of groupBreakIntervals(schedule, group)) {
+        add(group, interval.start, interval.end);
+        // Include contained university slots, not only exact observed gap boundaries.
+        let start = group.anchor + Math.ceil((interval.start-group.anchor)/group.step)*group.step;
+        for (; start+group.step <= interval.end; start += group.step) add(group, start, start+group.step);
+      }
+    }
+  }
+  for (const option of options.values()) option.count = schedules.filter(s => supportsBreak(s, option)).length;
+  return [...options.values()].filter(o => o.count).sort((a,b) => a.group.localeCompare(b.group) || a.start-b.start || a.end-b.end);
+}
+
+function filterSchedulesByBreaks(schedules, selectedBreakKeys, mode = 'all', options = availableBreaks) {
+  if (!selectedBreakKeys.length) return schedules;
+  const selected = selectedBreakKeys.map(key => options.find(o => o.key === key));
+  return schedules.filter(schedule => {
+    const matches = option => !!option && supportsBreak(schedule, option);
+    return mode === 'any' ? selected.some(matches) : selected.every(matches);
+  });
+}
+
+function applyBreakFilters() {
+  const keys = [...document.querySelectorAll('#breakFilters input:checked')].map(input => input.value);
+  const filtered = filterSchedulesByBreaks(candidateSchedules, keys, $('breakMode').value);
+  const visible = filtered.slice(0, 80);
+  visible.truncated = candidateSetTruncated;
+  renderSchedules(visible);
+  if (!filtered.length && keys.length) $('schedules').textContent = 'لا توجد جداول تحقق الاستراحات المحددة ضمن مجموعة النتائج.';
+  $('breakSummary').textContent = `مطابق: ${filtered.length} من ${candidateSchedules.length} جدول. المعروض: ${visible.length}.` +
+    (candidateSetTruncated ? ' النتائج جزئية: خيارات الاستراحة وأعدادها مبنية على مجموعة جداول محدودة بحد الأمان.' : '');
+}
+
+function setCandidateSchedules(results) {
+  candidateSchedules = results.candidates || results;
+  candidateSetTruncated = !!results.truncated;
+  availableBreaks = extractAvailableBreaks(candidateSchedules);
+  const container = $('breakFilters');
+  container.replaceChildren();
+  for (const group of BREAK_GROUPS) {
+    const options = availableBreaks.filter(o => o.group === group.id);
+    if (!options.length) continue;
+    const fieldset = document.createElement('fieldset'), legend = document.createElement('legend');
+    legend.textContent = group.days.join(' / '); fieldset.append(legend);
+    for (const option of options) {
+      const label = document.createElement('label'), input = document.createElement('input');
+      input.type = 'checkbox'; input.value = option.key;
+      input.addEventListener('change', applyBreakFilters);
+      label.append(input, ` ${minutesToTime(option.start)}–${minutesToTime(option.end)} — ${option.count} جداول`);
+      fieldset.append(label);
+    }
+    container.append(fieldset);
+  }
+  if (!availableBreaks.length) container.textContent = 'لا توجد استراحات جماعية متاحة ضمن النتائج.';
+  $('breakMode').value = 'all';
+  $('breakMode').onchange = applyBreakFilters;
+  applyBreakFilters();
+}
 let lastConflictReport = null;
 let currentResultTerm = null;
 
@@ -1374,7 +1503,7 @@ function renderSchedules(schedules) {
 
   const identities = [...new Set(schedules.flatMap(result => result.sections.map(section => courseIdentity(section))))].sort();
   const colors = new Map(identities.map((key, index) => [key, index % 6]));
-  schedules.slice(0, 10).forEach((result, index) => {
+  schedules.slice(0, 80).forEach((result, index) => {
     const card = document.createElement("div");
     card.className = "schedule-card";
 
@@ -1501,10 +1630,59 @@ async function loadSettings() {
   }
 }
 
+function completeScheduleGeneration(allSections, prefs) {
+  const unparseableCourses = [...allSections.entries()]
+    .filter(([, sections]) => !sections.some(hasCompleteTiming))
+    .map(([, sections]) => sections[0]?.courseLabel || "مادة غير معروفة");
+
+  if (unparseableCourses.length) {
+    setStatus(
+      "لا توجد مواعيد مكتملة ضمن أسبوع الدوام لبعض المواد (موعد غير منشور أو غير مقروء أو خارج الأسبوع):\n" +
+      unparseableCourses.map(x => `- ${x}`).join("\n") +
+      "\n\nالشعب الخام وأسباب استبعادها معروضة أعلاه؛ لا يمكن تأكيد جدول بدون مواعيد كاملة.",
+      "error"
+    );
+    return;
+  }
+
+  // Use only parseable sections when building schedules.
+  const parseable = new Map(
+    [...allSections.entries()].map(([key, sections]) => [
+      key,
+      sections.filter(hasCompleteTiming)
+    ])
+  );
+
+  const schedules = generateSchedules(parseable, prefs);
+  const excluded = [...allSections.values()].flat().filter(s => !hasCompleteTiming(s)).length;
+
+  setCandidateSchedules(schedules);
+
+  if (schedules.truncated) {
+    setStatus(`توقف البحث عند حد الأمان (${schedules.nodes} خطوة، ${schedules.totalFound} جدول محفوظ). النتائج جزئية؛ خيارات الاستراحة وأعدادها مبنية على الجداول المحفوظة فقط. لا يمكن تأكيد أفضل جدول أو عدم وجود حل. عُرض ${Math.min(80, schedules.length)} اقتراح.`, 'error');
+  } else if (schedules.length) {
+    setStatus(
+      `تم ✅ وجدت ${schedules.totalFound} جدولاً صالحاً من الشعب المقروءة. المعروض أفضل ${Math.min(80, schedules.length)}. استُبعدت ${excluded} شعبة ذات مواعيد غير مؤكدة.`,
+      "ok"
+    );
+  } else {
+    setStatus(
+      "تم جلب الشعب، لكن ما في جدول كامل يطابق الشروط الحالية.",
+      "error"
+    );
+  }
+}
+
 async function run() {
   const button = $("run");
   button.disabled = true;
   currentSchedules = [];
+  candidateSchedules = [];
+  availableBreaks = [];
+  $('breakFilters').replaceChildren();
+  $('breakSummary').textContent = '';
+  $('unavailablePanel').classList.add('hidden');
+  $('continueWithoutUnavailable').onclick = null;
   currentAllSections = new Map();
   lastConflictReport = null;
   currentResultTerm = null;
@@ -1532,13 +1710,6 @@ async function run() {
     if (!courses.length) {
       throw new Error("اكتب مادة واحدة على الأقل.");
     }
-    const requested = new Set();
-    for (const course of courses) {
-      const key = course.kind + ':' + HUSmartSearch.normalize(course.query);
-      if (requested.has(key)) throw new Error('المادة مكررة: ' + course.label);
-      requested.add(key);
-    }
-
     setStatus(`بدأت البحث عن ${courses.length} مواد...`);
     currentResultTerm = {year, semester};
 
@@ -1557,6 +1728,16 @@ async function run() {
       }
     }
 
+    // Only completed per-line resolutions establish requested identities. Do this
+    // before keying cards by original input, which can hide identical input lines.
+    const identities = new Map();
+    for (const result of results) {
+      const number = result.resolvedCourseNumber;
+      if (!number || result.error) continue;
+      if (identities.has(number)) throw new Error(`تم طلب نفس المادة أكثر من مرة: ${number}\n${identities.get(number)}\n${result.original}`);
+      identities.set(number, result.original);
+    }
+
     const allSections = new Map();
     const missing = [];
 
@@ -1564,8 +1745,7 @@ async function run() {
       const sections = buildSections(result);
 
       if (!sections.length) {
-        missing.push(result.label + (result.error ? ': ' + result.error : ' — ' + (result.searchMessage || 'لا توجد نتائج مطابقة')));
-        allSections.set(result.original, []);
+        missing.push(result);
       } else {
         allSections.set(result.original, sections);
       }
@@ -1574,61 +1754,34 @@ async function run() {
     renderSections(allSections);
     renderSectionConflicts(allSections);
 
-    const identities = new Set();
-    for (const sections of allSections.values()) {
-      const number = sections[0]?.courseNumber;
-      if (number && identities.has(number)) throw new Error('تم طلب نفس المادة بالاسم والرقم: ' + number);
-      if (number) identities.add(number);
-    }
-
     if (missing.length) {
-      setStatus(
-        `تم البحث، لكن لم تظهر شعب لهذه المواد:\n- ${missing.join("\n- ")}`,
-        "error"
-      );
+      const panel = $('unavailablePanel'), list = $('unavailableCourses');
+      list.replaceChildren();
+      for (const result of missing) {
+        const item = document.createElement('li');
+        item.textContent = result.label + ' — ' + (result.error || result.searchMessage || 'لا توجد نتائج مطابقة');
+        if (result.historicalHint) {
+          const hint = document.createElement('small');
+          hint.className = 'historical-hint'; hint.textContent = result.historicalHint; item.append(hint);
+        }
+        list.append(item);
+      }
+      panel.classList.remove('hidden');
+      const proceed = $('continueWithoutUnavailable');
+      // Failures and cancelled choices cannot masquerade as confirmed non-offerings.
+      proceed.hidden = !allSections.size || missing.some(r => r.error || r.searchState !== 'known_not_offered');
+      proceed.disabled = false;
+      proceed.onclick = () => {
+        proceed.disabled = true;
+        $('unavailableNotice').textContent = 'تم استبعاد المواد التالية باختيارك من الجداول المقترحة:';
+        completeScheduleGeneration(allSections, prefs);
+      };
+      $('unavailableNotice').textContent = 'توقف توليد الجدول. لم تُضف المواد التالية:';
+      setStatus('لم يتم توليد جدول ناقص. راجع المواد غير المتاحة أعلاه.', 'error');
       return;
     }
 
-    const unparseableCourses = [...allSections.entries()]
-      .filter(([, sections]) => !sections.some(hasCompleteTiming))
-      .map(([, sections]) => sections[0]?.courseLabel || "مادة غير معروفة");
-
-    if (unparseableCourses.length) {
-      setStatus(
-        "لا توجد مواعيد مكتملة ضمن أسبوع الدوام لبعض المواد (موعد غير منشور أو غير مقروء أو خارج الأسبوع):\n" +
-        unparseableCourses.map(x => `- ${x}`).join("\n") +
-        "\n\nالشعب الخام وأسباب استبعادها معروضة أعلاه؛ لا يمكن تأكيد جدول بدون مواعيد كاملة.",
-        "error"
-      );
-      return;
-    }
-
-    // Use only parseable sections when building schedules.
-    const parseable = new Map(
-      [...allSections.entries()].map(([key, sections]) => [
-        key,
-        sections.filter(hasCompleteTiming)
-      ])
-    );
-
-    const schedules = generateSchedules(parseable, prefs);
-    const excluded = [...allSections.values()].flat().filter(s => !hasCompleteTiming(s)).length;
-
-    renderSchedules(schedules);
-
-    if (schedules.truncated) {
-      setStatus(`بلغ البحث حد ${schedules.nodes} خطوة. النتائج جزئية؛ لا يمكن تأكيد أفضل جدول أو عدم وجود حل. عُرض ${Math.min(10, schedules.length)} اقتراح.`, 'error');
-    } else if (schedules.length) {
-      setStatus(
-        `تم ✅ وجدت ${schedules.totalFound} جدولاً صالحاً من الشعب المقروءة. المعروض أفضل ${Math.min(10, schedules.length)}. استُبعدت ${excluded} شعبة ذات مواعيد غير مؤكدة.`,
-        "ok"
-      );
-    } else {
-      setStatus(
-        "تم جلب الشعب، لكن ما في جدول كامل يطابق الشروط الحالية.",
-        "error"
-      );
-    }
+    completeScheduleGeneration(allSections, prefs);
   } catch (err) {
     console.error(err);
     setStatus(

@@ -1,6 +1,6 @@
 # Chrome Web Store Privacy Practices Disclosure
 
-This document provides exact copy-paste answers for the **Privacy practices** tab in the Chrome Web Store Developer Dashboard for **HU Smart Schedule v1.1.0**.
+This document provides exact copy-paste answers for the **Privacy practices** tab in the Chrome Web Store Developer Dashboard for **HU Smart Schedule v1.2.0**.
 
 ---
 

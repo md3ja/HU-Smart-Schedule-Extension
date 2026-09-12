@@ -482,3 +482,11 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
 .smart-search-options strong, .smart-search-options small { display: block; }
 .smart-search-options small { color: #475569; margin-top: 4px; font-weight: normal; }
 #smartSearchCancel { margin-top: 10px; background: #e2e8f0; color: #334155; }
+.historical-hint { display: block; margin-top: 6px; color: #64748b; font-size: 12px; }
+.availability-offered { color: #166534; }
+.availability-missing { color: #92400e; }
+.break-controls { margin-bottom: 16px; }
+#breakFilters { max-height: 320px; overflow-y: auto; }
+#breakFilters fieldset { display: flex; flex-wrap: wrap; gap: 8px; }
+#breakFilters label { display: flex; align-items: center; gap: 6px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; }
+#breakFilters input { width: auto; }

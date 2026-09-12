@@ -3,7 +3,7 @@
 ## Store Field Metadata
 
 - **Extension Name**: HU Smart Schedule
-- **Version**: 1.1.0
+- **Version**: 1.2.0
 - **Primary Category**: Education
 - **Category Rationale**: HU Smart Schedule is an academic planning utility built specifically for Hashemite University students to explore published course offerings, resolve lecture time conflicts, and organize their semester schedule. The Education category directly represents its student and academic focus.
 - **Pricing**: Free (No in-app purchases)
@@ -27,7 +27,8 @@ Planning a university schedule can be challenging when course sections overlap. 
 
 ✨ MAIN FEATURES
 
-• 🔎 Smart Search — Smart Search v1 matches course names and numbers locally against a bundled catalog of 3,203 courses, with Arabic normalization. Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require a course choice; Java, جافا, C++, AI, and ROS are not automatically resolved. A known course without sections in the selected semester is shown as not offered. Historical semester hints are guidance, not a guarantee of future availability.
+• 🔎 Smart & Hybrid Search — Matches course names and numbers locally against a bundled 3,203-course catalog with Arabic normalization and simultaneously queries live university listings so offered courses are always reachable with clear availability indicators. Includes independent identity resolution and graceful continuation for unoffered courses.
+• ☕ Campus Break Filtering — Interactive timetable break filtering for Sunday/Tuesday/Thursday and Monday/Wednesday schedules with AND/OR selection evaluated entirely in-memory.
 • 📚 Published Course Sections — Retrieve announced sections, instructors, lecture days, times, and classroom venues directly from Hashemite University's public schedule pages.
 • ⚠️ Automatic Conflict Detection — Instantly identifies overlapping class times across candidate sections.
 • 🧩 Schedule Generation — Generates timetable proposals without time conflicts.
@@ -92,7 +93,8 @@ HU Smart Schedule هي إضافة لمتصفح Google Chrome تساعد طلبة
 
 ✨ المميزات الرئيسية
 
-• 🔎 البحث الذكي — يطابق البحث الذكي أسماء المواد وأرقامها محليًا باستخدام دليل مضمّن يضم 3,203 مواد، مع توحيد أشكال الحروف العربية. الاختصاران المعتمدان هما NLP → 2010042470 وCalc 1 → 110108101. عند تعدد المعاني، تختار المادة بنفسك؛ ولا تُحسم Java أو جافا أو C++ أو AI أو ROS تلقائيًا. تظهر المادة المعروفة التي لا تتوفر لها شعب في الفصل المختار على أنها غير مطروحة. مؤشرات الفصول السابقة إرشادية ولا تضمن الطرح مستقبلًا.
+• 🔎 البحث الذكي والهجين — يطابق أسماء المواد وأرقامها محليًا عبر دليل مضمّن يضم 3,203 مواد ويستعلم جريدة المواد المباشرة بالتزامن لإظهار المواد المطروحة مع شارات توفر واضحة، مع معالجة مستقلة لهوية المواد وخيار المتابعة عند عدم توفر مادة.
+• ☕ فلترة الفراغات (Break Filtering) — تصفية تفاعلية للجداول حسب فترات الاستراحة بين المحاضرات الوجاهية لأيام (الأحد/الثلاثاء/الخميس) و(الاثنين/الأربعاء) بوضعي AND و OR.
 • 📚 عرض الشعب المعلنة: جلب بيانات الشعب والمدرسين والأيام والمواعيد والقاعات مباشرة من صفحات جريدة المواد العامة في الجامعة الهاشمية.
 • ⚠️ اكتشاف التعارضات تلقائيًا: فحص لأي تداخل زمني بين مواعيد الشعب المختلفة.
 • 🧩 توليد جداول بدون تعارض: اقتراح تركيبات جداول متكاملة تغطي جميع المواد بدون تضارب في المواعيد.

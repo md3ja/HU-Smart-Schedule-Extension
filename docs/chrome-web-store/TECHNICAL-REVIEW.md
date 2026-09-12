@@ -1,13 +1,13 @@
 # Technical Architecture & Chrome Web Store Review Analysis
 
 **Extension**: HU Smart Schedule  
-**Target Version**: 1.1.0  
+**Target Version**: 1.2.0  
 **Manifest Version**: 3  
 **Review Date**: September 2026  
 **Repository**: [HU-Smart-Schedule-Extension](https://github.com/md3ja/HU-Smart-Schedule-Extension)  
 **Project Status**: Independent project (Publicly auditable source repository; Copyright © 2026. All rights reserved.)
 
-This technical review inspects the actual production codebase of HU Smart Schedule v1.1.0 to provide verifiable, evidence-based answers for Chrome Web Store submission, privacy certifications, and permission justifications.
+This technical review inspects the actual production codebase of HU Smart Schedule v1.2.0 to provide verifiable, evidence-based answers for Chrome Web Store submission, privacy certifications, and permission justifications.
 
 ---
 
@@ -16,7 +16,7 @@ This technical review inspects the actual production codebase of HU Smart Schedu
 Inspection of `manifest.json` confirms:
 - **`manifest_version`**: `3`
 - **`name`**: `"HU Smart Schedule"`
-- **`version`**: `"1.1.0"`
+- **`version`**: `"1.2.0"`
 - **`description`**: `"__MSG_appDesc__"`
 - **`default_locale`**: `"en"`; packaged English and Arabic descriptions.
 - **`icons`**:
@@ -70,11 +70,11 @@ Inspection of `manifest.json` confirms:
 
 ### B. Local Schedule Processing
 
-Smart Search v1 matches course names and numbers locally against a bundled catalog of 3,203 courses, with Arabic normalization. Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require a course choice; Java, جافا, C++, AI, and ROS are not automatically resolved. A known course without sections in the selected semester is shown as not offered. Historical semester hints are guidance, not a guarantee of future availability.
+Smart Search v1.2 matches course names and numbers locally against a bundled catalog of 3,203 courses with Arabic normalization and queries live HU portal listings in Hybrid Search mode. Offered courses appear with clear availability badges alongside catalog entries. Course identities resolve independently so lecture and lab components remain distinct requested courses. Interactive Break filtering evaluates real campus gaps across Sunday/Tuesday/Thursday and Monday/Wednesday schedules (AND/OR modes) locally in memory.
 
 Smart Search matching runs locally. Live semester sections are fetched directly from hu.edu.jo using the selected course number, academic year, and semester; unresolved Arabic name searches may use HU’s name-search service. No intermediary backend or analytics is used.
 
-Runtime files include locally packaged `smart-search.js` and `smart-search-catalog.json`; popup.html loads Smart Search before popup.js. Source: private reviewed commit `80f7f16b20f0eee0526e71db08bf7551b5e4c422`.
+Runtime files include locally packaged `smart-search.js` and `smart-search-catalog.json`; popup.html loads Smart Search before popup.js. Source: private reviewed commit `4df607a6067998bc55185dd3534410f1b75d693b`.
 
 Once course section HTML is received by the extension:
 - **Conflict Detection**: Checks for lecture time overlaps locally in browser memory.

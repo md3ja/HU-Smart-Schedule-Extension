@@ -31,7 +31,11 @@ Enter your courses, choose your preferences, and generate timetable options with
 - 🧩 Generate conflict-free schedule combinations
 - ⭐ Rank schedules by student preferences
 - 📅 Sunday–Thursday weekly calendar
-- ⏳ Break calculation between in-person classes
+- ⚡ Hybrid Search combining local catalog with live university results
+- 🎯 Offered & unoffered course status clarity with graceful omission flow
+- 🛡️ Independent course identity resolution preventing false duplicate warnings
+- ☕ Break filtering on Sunday–Thursday and Monday–Wednesday grids (AND/OR modes)
+- ⏳ Campus break calculation between in-person classes
 - 🌐 Online classes included in conflict detection
 - 🖥️ Full-page planner mode
 - 📋 Copy schedule information
@@ -59,11 +63,17 @@ No student portal login is required.
 
 ---
 
-## 🔎 Smart Search v1
+## 🔎 Smart Search & Hybrid Retrieval v1.2
 
-Smart Search v1 matches course names and numbers locally against a bundled catalog of 3,203 courses, with Arabic normalization. Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require a course choice; Java, جافا, C++, AI, and ROS are not automatically resolved. A known course without sections in the selected semester is shown as not offered. Historical semester hints are guidance, not a guarantee of future availability.
+Smart Search v1.2 matches course names and numbers locally against a bundled catalog of 3,203 courses with Arabic normalization, while concurrently querying live university portal listings in Hybrid Search mode. This ensures currently offered courses always appear alongside catalog entries with clear availability badges (`متاح هذا الفصل` vs `غير مطروح في هذا الفصل`). Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require an explicit course selection; Java, جافا, C++, AI, and ROS are not automatically resolved.
+
+When a requested course has no sections in the selected semester, schedule generation pauses by default and offers an explicit option to continue without it. Course identities resolve independently so lectures and labs never collide as false duplicates.
 
 Smart Search matching runs locally. Live semester sections are fetched directly from hu.edu.jo using the selected course number, academic year, and semester; unresolved Arabic name searches may use HU’s name-search service. No intermediary backend or analytics is used.
+
+## ☕ Break Filtering
+
+Filter generated schedule proposals directly in the popup using real campus breaks between in-person classes. Intervals are grouped into Sunday/Tuesday/Thursday (hourly slots anchored at 08:30) and Monday/Wednesday (90-minute slots anchored at 08:00) patterns. Supports multi-selection with both **AND** (all selected breaks) and **OR** (any selected break) matching modes, calculated instantly in memory without refetching.
 
 ## 🔎 Quick course search
 
@@ -125,7 +135,7 @@ It is not affiliated with, endorsed by, officially connected to, or approved by 
 
 <div align="center">
 
-**Version 1.1.0**
+**Version 1.2.0**
 
 Copyright © 2026. All rights reserved.
 

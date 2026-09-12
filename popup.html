@@ -93,6 +93,13 @@
       </div>
     </section>
 
+    <section id="unavailablePanel" class="panel hidden" aria-live="polite">
+      <h2>مواد لم تُضف إلى الجدول</h2>
+      <p id="unavailableNotice"></p>
+      <ul id="unavailableCourses"></ul>
+      <button id="continueWithoutUnavailable" type="button">متابعة بدون المواد غير المطروحة</button>
+    </section>
+
     <section id="sectionsPanel" class="panel hidden">
       <h2>كل الشعب والتواقيت</h2>
       <div id="sections"></div>
@@ -105,6 +112,18 @@
 
     <section id="schedulesPanel" class="panel hidden">
       <h2>أفضل الجداول المقترحة</h2>
+      <div class="break-controls">
+        <h3>الاستراحات المتاحة</h3>
+        <p class="hint">تتحقق الاستراحة في كل أيام الحضور الوجاهي النشطة ضمن المجموعة. اليوم بلا حضور وجاهي لا يُحسب استراحة.</p>
+        <label>تصفية الجداول حسب
+          <select id="breakMode">
+            <option value="all">كل الاستراحات المحددة</option>
+            <option value="any">أي استراحة محددة</option>
+          </select>
+        </label>
+        <div id="breakFilters"></div>
+        <p id="breakSummary" role="status" aria-live="polite"></p>
+      </div>
       <div id="schedules"></div>
     </section>
   </main>
