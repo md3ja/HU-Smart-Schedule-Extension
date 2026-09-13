@@ -397,7 +397,7 @@ function parseResultTable(doc) {
 }
 
 function nameKey(value) {
-  return normalizeArabic(arabicDigitsToAscii(value)).replace(/[()[\]{}]/g, ' ')
+  return HUSmartSearch.normalize(value).replace(/[()[\]{}]/g, ' ')
     .replace(/(^|\s)و\s+/g, '$1و').replace(/\s+/g, ' ').trim();
 }
 
@@ -534,6 +534,28 @@ async function getSmartSearchIndex() {
   return smartSearchIndexPromise;
 }
 
+const BROAD_TERMS = new Map([
+  ...['تدريب','التدريب','Internship','Field Training'].map(q=>[HUSmartSearch.normalize(q),'training']),
+  ...['مشروع','مشروع تخرج','Project','Graduation Project'].map(q=>[HUSmartSearch.normalize(q),'project']),
+  ...['مختبر','لاب','Lab'].map(q=>[HUSmartSearch.normalize(q),'lab']),
+  ...['مواضيع خاصة','Special Topics'].map(q=>[HUSmartSearch.normalize(q),'topics'])
+]);
+let broadFacultyChoice;
+function broadTermFamily(query) { return BROAD_TERMS.get(HUSmartSearch.normalize(query)); }
+function chooseCollege(index) {
+  if (broadFacultyChoice !== undefined) return Promise.resolve(broadFacultyChoice);
+  const panel=$('collegePrompt'),options=$('collegeOptions');options.replaceChildren();panel.classList.remove('hidden');
+  return new Promise(resolve=>{
+    const finish=value=>{panel.classList.add('hidden');$('cancelCollege').onclick=null;if(value!==null)broadFacultyChoice=value;resolve(value);};
+    for(const faculty of [...new Set(index.courses.flatMap(c=>c.faculties||[]))].sort()) {
+      const button=document.createElement('button');button.type='button';button.textContent=faculty;button.dataset.faculty=faculty;
+      button.onclick=()=>finish(faculty);options.append(button);
+    }
+    const all=document.createElement('button');all.type='button';all.textContent='كل الكليات — قد يستغرق البحث وقتًا أطول';all.dataset.faculty='*';all.onclick=()=>finish('*');options.append(all);
+    $('cancelCollege').onclick=()=>finish(null);options.querySelector('button')?.focus();
+  });
+}
+
 function chooseSmartCourse(query, candidates, mode = 'ambiguous') {
   if (!candidates.length) return Promise.resolve(null);
   const panel = $('smartSearchChoice'), options = $('smartSearchOptions');
@@ -554,19 +576,23 @@ function chooseSmartCourse(query, candidates, mode = 'ambiguous') {
       const button = document.createElement('button');
       button.type = 'button';
       button.dataset.courseNumber = course.courseNumber;
+      button.className = 'candidate-card' + (course.offered === true ? ' candidate-offered' : (course.offered === false ? ' candidate-missing' : ''));
       const name = document.createElement('strong');
+      name.className = 'candidate-name';
       name.textContent = course.officialName;
       const number = document.createElement('bdi');
+      number.className = 'candidate-number';
       number.textContent = course.courseNumber;
       button.append(name, number);
       if (typeof course.offered === 'boolean') {
         const availability = document.createElement('small');
-        availability.className = course.offered ? 'availability-offered' : 'availability-missing';
-        availability.textContent = course.offered ? 'متاح هذا الفصل' : 'غير مطروح في هذا الفصل';
+        availability.className = course.offered ? 'badge availability-offered' : 'badge availability-missing';
+        availability.textContent = course.offered ? 'متاح هذا الفصل' : 'غير مطروح هذا الفصل';
         button.append(availability);
       }
       if (course.context?.length) {
         const context = document.createElement('small');
+        context.className = 'candidate-context';
         context.textContent = course.context.join(' / ');
         button.append(context);
       }
@@ -585,18 +611,31 @@ async function searchSmartCourse(course, year, semester) {
     if (course.kind !== 'number') throw new Error('تعذر تحميل فهرس المواد؛ أعد المحاولة أو استخدم رقم المادة مباشرة.');
   }
   let resolution = index ? HUSmartSearch.resolve(index, course.query) : {state: 'unknown', suggestions: []};
+  const family=course.kind==='name'&&broadTermFamily(course.query);
+  let faculty='*';
+  if(family) {
+    faculty=await chooseCollege(index);
+    if(faculty===null)return {...course,headers:[],rows:[],searchState:'unknown',searchMessage:'تم إلغاء اختيار الكلية.'};
+  }
+  const inFaculty=c=>faculty==='*'||c?.faculties?.includes(faculty);
   if (course.kind === 'number') resolution = {state: 'resolved', courseNumber: course.query, course: index?.byNumber.get(course.query)};
+  if (resolution.rejected) return {...course,headers:[],rows:[],searchState:'unknown',searchMessage:'مصطلح البحث غير معتمد؛ استخدم اسم المادة أو رقمها.'};
   // Approved aliases have an explicit identity. All other names use both sources.
-  if (course.kind !== 'number' && resolution.match !== 'approved_alias') {
+  if (course.kind !== 'number' && (family || !(resolution.state === 'resolved' && ['approved_alias','exact_alias'].includes(resolution.match)))) {
     let live;
     try {
       const found = await searchCourse(course, year, semester, course.query, true);
-      live = groupCourseCandidates(found.headers, found.rows, index);
+      live = groupCourseCandidates(found.headers, found.rows, index).filter(inFaculty);
     } catch (error) {
       if (!error.courseCandidates) throw error;
-      live = error.courseCandidates.map(c => ({...c, ...index.byNumber.get(c.courseNumber), offered: true}));
+      live = error.courseCandidates.map(c => ({...c, ...index.byNumber.get(c.courseNumber), offered: true})).filter(inFaculty);
     }
-    const local = resolution.course ? [resolution.course] : resolution.candidates || resolution.suggestions || [];
+    let local = resolution.course ? [resolution.course] : resolution.candidates || resolution.suggestions || [];
+    if(family) {
+      const pattern={training:/تدريب/,project:/مشروع/,lab:/مختبر/,topics:/(مواضيع|موضوعات) خاصه/}[family];
+      local=[...new Map([...local,...index.courses.filter(c=>pattern.test(c.normalizedName))].map(c=>[c.courseNumber,c])).values()];
+    }
+    local=local.filter(inFaculty);
     const merged = new Map(live.map(c => [c.courseNumber, c]));
     // Absence from a spelling-sensitive name response is not proof of non-offering.
     // Verify catalog-only candidates by number before assigning availability badges.
@@ -606,9 +645,9 @@ async function searchSmartCourse(course, year, semester) {
       merged.set(candidate.courseNumber, {...candidate, offered: verified.rows.length > 0});
     }
     const fullNameMatch = candidate => HUSmartSearch.normalize(candidate.officialName) === HUSmartSearch.normalize(course.query);
-    const candidates = [...merged.values()].sort((a,b) => Number(fullNameMatch(b))-Number(fullNameMatch(a)) || Number(b.offered)-Number(a.offered) || a.courseNumber.localeCompare(b.courseNumber));
+    const candidates = [...merged.values()].sort((a,b) => HUSmartSearch.candidateRank(index,course.query,a)-HUSmartSearch.candidateRank(index,course.query,b) || Number(b.offered)-Number(a.offered) || a.courseNumber.localeCompare(b.courseNumber));
     const exact = candidates.filter(fullNameMatch);
-    const forceChoice = resolution.match === 'ambiguous_alias' || resolution.reviewRequired;
+    const forceChoice = family || resolution.requiresChoice || resolution.match === 'ambiguous_alias' || resolution.reviewRequired;
     let chosen;
     if (exact.length === 1 && !forceChoice) chosen = exact[0];
     else if (candidates.length) chosen = await chooseSmartCourse(course.query, candidates, resolution.match);
@@ -1163,6 +1202,7 @@ function filterSchedulesByBreaks(schedules, selectedBreakKeys, mode = 'all', opt
 
 function applyBreakFilters() {
   const keys = [...document.querySelectorAll('#breakFilters input:checked')].map(input => input.value);
+  if(workflowSession){workflowSession.breakKeys=keys;workflowSession.breakMode=$('breakMode').value;}
   const filtered = filterSchedulesByBreaks(candidateSchedules, keys, $('breakMode').value);
   const visible = filtered.slice(0, 80);
   visible.truncated = candidateSetTruncated;
@@ -1362,10 +1402,13 @@ function renderSections(allSections) {
 
     card.innerHTML = `
       <summary class="course-title">
-        ${escapeHtml(title)}
-        <span class="badge">${sections.length} شعب/خيارات</span>
-        <span class="badge">${parsedCount} وقت مقروء</span>
-        ${sections.some(sec => sectionTimingLabel(sec) === 'موعد غير منشور') ? '<span class="badge warn">موعد غير منشور</span>' : ''}
+        <div class="course-header-info">
+          <span class="course-header-name">${escapeHtml(title)}</span>
+          <span class="badge availability-offered">متاح هذا الفصل</span>
+          <span class="badge">${sections.length} شعب/خيارات</span>
+          <span class="badge">${parsedCount} وقت مقروء</span>
+          ${sections.some(sec => sectionTimingLabel(sec) === 'موعد غير منشور') ? '<span class="badge warn">موعد غير منشور</span>' : ''}
+        </div>
       </summary>
       ${sections.map(sec => `
         <div class="section">
@@ -1383,6 +1426,12 @@ function renderSections(allSections) {
       `).join("")}
     `;
 
+    const active=workflowSession?.entries.find(e=>!e.excluded&&e.id===courseKey);
+    if(active) {
+      const remove=document.createElement('button');remove.type='button';remove.textContent='إزالة';remove.className='btn-remove-course';remove.dataset.removeCourse=active.id;
+      remove.title='إزالة المادة من الجدول الحالي';
+      remove.disabled=workflowBusy;remove.onclick=event=>{event.preventDefault();event.stopPropagation();removeWorkflowCourse(active.id);};card.querySelector('summary').append(remove);
+    }
     container.appendChild(card);
   }
 
@@ -1673,125 +1722,132 @@ function completeScheduleGeneration(allSections, prefs) {
   }
 }
 
+let workflowSession = null;
+let workflowBusy = false;
+let workflowEntryId = 0;
+
+function userSearchError(error) {
+  console.error(error);
+  return 'تعذر قراءة بيانات الشعب من موقع الجامعة. حاول مرة ثانية، وإذا استمرت المشكلة أرفق صورة للشاشة عند التواصل معنا.';
+}
+
+function setWorkflowBusy(busy) {
+  workflowBusy=busy;
+  for(const id of ['run','addCourseConfirm','showAddCourse','changeCollege']) $(id).disabled=busy;
+  for(const button of document.querySelectorAll('[data-remove-course]'))button.disabled=busy;
+  $('continueWithoutUnavailable').disabled=busy;
+}
+
+function clearWorkflowResults() {
+  currentSchedules=[];candidateSchedules=[];availableBreaks=[];candidateSetTruncated=false;
+  currentAllSections=new Map();lastConflictReport=null;
+  if(workflowSession){workflowSession.breakKeys=[];workflowSession.breakMode='all';}
+  $('breakFilters').replaceChildren();$('breakSummary').textContent='';
+  for(const id of ['sections','schedules','sectionConflicts'])$(id).replaceChildren();
+  for(const id of ['sectionsPanel','schedulesPanel','conflictsPanel','unavailablePanel'])$(id).classList.add('hidden');
+  $('continueWithoutUnavailable').onclick=null;
+}
+
+function duplicateWorkflowMessage(entries) {
+  const identities=new Map();
+  for(const entry of entries) {
+    const r=entry.result,number=r.resolvedCourseNumber;
+    if(!number||r.error)continue;
+    if(identities.has(number))return `${identities.get(number)} و ${r.original} يشيران لنفس المادة\n(${number} — ${r.canonicalName||r.label}).\nاحذف أحدهما للمتابعة.`;
+    identities.set(number,r.original);
+  }
+  return '';
+}
+
+function removeWorkflowCourse(id) {
+  if(workflowBusy||!workflowSession)return;
+  const entry=workflowSession.entries.find(e=>e.id===id);
+  if(entry)entry.excluded=true;
+  refreshWorkflow();
+}
+
+function refreshWorkflow() {
+  clearWorkflowResults();
+  if(!workflowSession)return;
+  currentResultTerm={...workflowSession.term};
+  try {workflowSession.prefs=getPrefs();}catch(error){setStatus('وقت البداية يجب أن يسبق وقت النهاية.','error');return;}
+  const active=workflowSession.entries.filter(e=>!e.excluded);
+  $('courses').value=active.map(e=>e.result.original).join('\n');
+  $('workflowPanel').classList.remove('hidden');
+  $('workflowScope').textContent=`السنة ${currentResultTerm.year} — ${currentResultTerm.semester}. الإضافة تستخدم نفس الفصل والبيانات المحفوظة لهذه الجلسة.`;
+  const missing=active.filter(e=>!e.sections.length),allSections=new Map(active.filter(e=>e.sections.length).map(e=>[e.id,e.sections]));
+  renderSections(allSections);renderSectionConflicts(allSections);
+  if(!allSections.size){$('sectionsPanel').classList.add('hidden');$('conflictsPanel').classList.add('hidden');}
+  const duplicate=duplicateWorkflowMessage(active);
+  const list=$('unavailableCourses');list.replaceChildren();
+  for(const entry of missing) {
+    const r=entry.result,item=document.createElement('li');
+    item.textContent=`${r.label} (${r.resolvedCourseNumber||r.query}) — ${r.error||r.searchMessage||'لم يتم تحديد المادة.'}`;
+    if(r.searchState==='known_not_offered') {
+      const badge=document.createElement('span');badge.className='badge availability-missing';badge.textContent='غير مطروح هذا الفصل';item.append(badge);
+    }
+    if(r.historicalHint){const hint=document.createElement('small');hint.className='historical-hint';hint.textContent=r.historicalHint;item.append(hint);}
+    const remove=document.createElement('button');remove.type='button';remove.dataset.removeCourse=entry.id;
+    remove.textContent=r.searchState==='known_not_offered'?'استبعاد المادة والمتابعة':'إزالة الطلب';remove.disabled=workflowBusy;remove.onclick=()=>removeWorkflowCourse(entry.id);item.append(remove);list.append(item);
+  }
+  const omitted=workflowSession.entries.filter(e=>e.excluded&&!e.sections.length);
+  if(missing.length||omitted.length) {
+    $('unavailablePanel').classList.remove('hidden');
+    $('unavailableNotice').textContent=missing.length?'لم تُضف المواد التالية؛ استبعد المادة غير المطروحة للمتابعة:':'تم استبعاد المواد التالية باختيارك من الجداول المقترحة: '+omitted.map(e=>e.result.label).join('، ');
+  }
+  const proceed=$('continueWithoutUnavailable');
+  proceed.hidden=!missing.length||!allSections.size||missing.some(e=>e.result.error||e.result.searchState!=='known_not_offered');
+  proceed.disabled=!missing.length;
+  if(missing.length)proceed.onclick=()=>{if(workflowBusy)return;for(const e of missing)e.excluded=true;refreshWorkflow();};
+  if(duplicate){setStatus(duplicate,'error');return;}
+  if(!active.length){setStatus('لا توجد مواد في الجدول الحالي. أضف مادة للبدء.');return;}
+  if(missing.length){setStatus('لم يتم توليد جدول ناقص. استبعد المادة غير المطروحة للمتابعة أو أزل الطلب لتغييره.','error');return;}
+  completeScheduleGeneration(allSections,workflowSession.prefs);
+  if(!currentSchedules.length) setStatus($('status').textContent+' يمكنك إزالة مادة أو تغييرها بإزالتها ثم إضافة البديل.','error');
+}
+
+async function loadWorkflowEntry(course) {
+  let result;
+  try {result=await searchSmartCourse(course,workflowSession.term.year,workflowSession.term.semester);}
+  catch(error){result={...course,headers:[],rows:[],error:userSearchError(error)};}
+  let sections=[];
+  try {sections=buildSections(result);}catch(error){result.error=userSearchError(error);}
+  workflowSession.entries.push({id:'course-'+(++workflowEntryId),result,sections,excluded:false});
+}
+
+async function addWorkflowCourse() {
+  if(workflowBusy||!workflowSession)return;
+  const course=parseCourseLine($('addCourseInput').value);
+  if(!course){setStatus('اكتب اسم المادة أو رقمها لإضافتها.','error');return;}
+  setWorkflowBusy(true);setStatus('جاري البحث عن المادة الجديدة: '+course.label);
+  try {
+    await loadWorkflowEntry(course);
+    refreshWorkflow();$('addCourseInput').value='';$('addCourseForm').classList.add('hidden');
+  } catch(error){setStatus(userSearchError(error),'error');}
+  finally {setWorkflowBusy(false);}
+}
+
 async function run() {
-  const button = $("run");
-  button.disabled = true;
-  currentSchedules = [];
-  candidateSchedules = [];
-  availableBreaks = [];
-  $('breakFilters').replaceChildren();
-  $('breakSummary').textContent = '';
-  $('unavailablePanel').classList.add('hidden');
-  $('continueWithoutUnavailable').onclick = null;
-  currentAllSections = new Map();
-  lastConflictReport = null;
-  currentResultTerm = null;
-
-  $("sectionsPanel").classList.add("hidden");
-  $("schedulesPanel").classList.add("hidden");
-  $('conflictsPanel').classList.add('hidden');
-  $("sections").innerHTML = "";
-  $("schedules").innerHTML = "";
-  $('sectionConflicts').innerHTML = '';
-
+  if(workflowBusy)return;
+  setWorkflowBusy(true);workflowSession=null;currentResultTerm=null;clearWorkflowResults();$('workflowPanel').classList.add('hidden');
   try {
     await saveSettings();
-
-    const year = arabicDigitsToAscii(cleanText($("year").value));
-    const semester = $("semester").value;
-    if (!/^\d{4}$/.test(year)) throw new Error('أدخل سنة صحيحة من أربع خانات.');
-    const prefs = getPrefs();
-
-    const courses = $("courses").value
-      .split(/\r?\n/)
-      .map(parseCourseLine)
-      .filter(Boolean);
-
-    if (!courses.length) {
-      throw new Error("اكتب مادة واحدة على الأقل.");
+    const year=arabicDigitsToAscii(cleanText($('year').value)),semester=$('semester').value;
+    if(!/^\d{4}$/.test(year)){setStatus('أدخل سنة صحيحة من أربع خانات.','error');return;}
+    let prefs;
+    try {prefs=getPrefs();}catch(error){setStatus('وقت البداية يجب أن يسبق وقت النهاية.','error');return;}
+    const courses=$('courses').value.split(/\r?\n/).map(parseCourseLine).filter(Boolean);
+    if(!courses.length){setStatus('اكتب مادة واحدة على الأقل.','error');return;}
+    workflowSession={term:{year,semester},prefs,entries:[],breakKeys:[],breakMode:'all'};
+    for(let i=0;i<courses.length;i++) {
+      setStatus(`جاري البحث ${i+1}/${courses.length}: ${courses[i].label}`);
+      await loadWorkflowEntry(courses[i]);
     }
-    setStatus(`بدأت البحث عن ${courses.length} مواد...`);
-    currentResultTerm = {year, semester};
-
-    const results = [];
-
-    // Sequential requests are intentional: WebForms is stateful and this is
-    // also gentler on the university website.
-    for (let i = 0; i < courses.length; i++) {
-      const course = courses[i];
-      setStatus(`جاري البحث ${i + 1}/${courses.length}: ${course.label}`);
-
-      try {
-        results.push(await searchSmartCourse(course, year, semester));
-      } catch (error) {
-        results.push({...course, headers: [], rows: [], error: error.message});
-      }
-    }
-
-    // Only completed per-line resolutions establish requested identities. Do this
-    // before keying cards by original input, which can hide identical input lines.
-    const identities = new Map();
-    for (const result of results) {
-      const number = result.resolvedCourseNumber;
-      if (!number || result.error) continue;
-      if (identities.has(number)) throw new Error(`تم طلب نفس المادة أكثر من مرة: ${number}\n${identities.get(number)}\n${result.original}`);
-      identities.set(number, result.original);
-    }
-
-    const allSections = new Map();
-    const missing = [];
-
-    for (const result of results) {
-      const sections = buildSections(result);
-
-      if (!sections.length) {
-        missing.push(result);
-      } else {
-        allSections.set(result.original, sections);
-      }
-    }
-
-    renderSections(allSections);
-    renderSectionConflicts(allSections);
-
-    if (missing.length) {
-      const panel = $('unavailablePanel'), list = $('unavailableCourses');
-      list.replaceChildren();
-      for (const result of missing) {
-        const item = document.createElement('li');
-        item.textContent = result.label + ' — ' + (result.error || result.searchMessage || 'لا توجد نتائج مطابقة');
-        if (result.historicalHint) {
-          const hint = document.createElement('small');
-          hint.className = 'historical-hint'; hint.textContent = result.historicalHint; item.append(hint);
-        }
-        list.append(item);
-      }
-      panel.classList.remove('hidden');
-      const proceed = $('continueWithoutUnavailable');
-      // Failures and cancelled choices cannot masquerade as confirmed non-offerings.
-      proceed.hidden = !allSections.size || missing.some(r => r.error || r.searchState !== 'known_not_offered');
-      proceed.disabled = false;
-      proceed.onclick = () => {
-        proceed.disabled = true;
-        $('unavailableNotice').textContent = 'تم استبعاد المواد التالية باختيارك من الجداول المقترحة:';
-        completeScheduleGeneration(allSections, prefs);
-      };
-      $('unavailableNotice').textContent = 'توقف توليد الجدول. لم تُضف المواد التالية:';
-      setStatus('لم يتم توليد جدول ناقص. راجع المواد غير المتاحة أعلاه.', 'error');
-      return;
-    }
-
-    completeScheduleGeneration(allSections, prefs);
-  } catch (err) {
-    console.error(err);
-    setStatus(
-      `صار خطأ: ${err?.message || err}\n\nإذا الجامعة غيّرت أسماء الحقول، ابعثلي Screenshot أو HTML للنتيجة.`,
-      "error"
-    );
-  } finally {
-    button.disabled = false;
-  }
+    refreshWorkflow();
+  }catch(error){setStatus(userSearchError(error),'error');}
+  finally{setWorkflowBusy(false);}
 }
+
 
 function openInTab() {
   const url = (typeof chrome !== 'undefined' && chrome.runtime?.getURL)
@@ -1827,3 +1883,7 @@ initTabMode();
 $("run").disabled = true;
 loadSettings().catch(console.error).finally(() => { $("run").disabled = false; });
 $("run").addEventListener("click", run);
+
+$('showAddCourse').onclick=()=>{$('addCourseForm').classList.remove('hidden');$('addCourseInput').focus();};
+$('addCourseConfirm').onclick=addWorkflowCourse;
+$('changeCollege').onclick=()=>{broadFacultyChoice=undefined;setStatus('تم إلغاء تثبيت الكلية؛ سيُطلب تحديد الكلية عند البحث التالي عن المواد المشتركة (تدريب، مشروع، مختبر).');};

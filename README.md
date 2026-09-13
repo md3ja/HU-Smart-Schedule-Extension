@@ -63,7 +63,7 @@ No student portal login is required.
 
 ---
 
-## 🔎 Smart Search & Hybrid Retrieval v1.2
+## 🔎 Smart Search & Hybrid Retrieval v1.3
 
 Smart Search v1.2 matches course names and numbers locally against a bundled catalog of 3,203 courses with Arabic normalization, while concurrently querying live university portal listings in Hybrid Search mode. This ensures currently offered courses always appear alongside catalog entries with clear availability badges (`متاح هذا الفصل` vs `غير مطروح في هذا الفصل`). Approved aliases include NLP → 2010042470 and Calc 1 → 110108101. Ambiguous terms require an explicit course selection; Java, جافا, C++, AI, and ROS are not automatically resolved.
 
@@ -135,7 +135,7 @@ It is not affiliated with, endorsed by, officially connected to, or approved by 
 
 <div align="center">
 
-**Version 1.2.0**
+**Version 1.3.0**
 
 Copyright © 2026. All rights reserved.
 

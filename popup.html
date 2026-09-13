@@ -93,6 +93,11 @@
       </div>
     </section>
 
+    <section id="collegePrompt" class="panel hidden" role="group" aria-labelledby="collegePromptTitle">
+      <h2 id="collegePromptTitle">هذا البحث موجود في أكثر من كلية. اختر كليتك لعرض المواد المناسبة:</h2>
+      <div id="collegeOptions" class="smart-search-options"></div>
+      <button id="cancelCollege" type="button">إلغاء البحث</button>
+    </section>
     <section id="unavailablePanel" class="panel hidden" aria-live="polite">
       <h2>مواد لم تُضف إلى الجدول</h2>
       <p id="unavailableNotice"></p>
@@ -103,6 +108,21 @@
     <section id="sectionsPanel" class="panel hidden">
       <h2>كل الشعب والتواقيت</h2>
       <div id="sections"></div>
+    </section>
+
+    <section id="workflowPanel" class="panel workflow-panel hidden">
+      <div class="workflow-header">
+        <h3 class="workflow-title">إدارة المواد</h3>
+        <p id="workflowScope" class="hint"></p>
+      </div>
+      <div class="workflow-actions">
+        <button id="showAddCourse" type="button" class="btn-workflow-action">+ إضافة مادة</button>
+        <button id="changeCollege" type="button" class="btn-workflow-action">تغيير الكلية</button>
+      </div>
+      <div id="addCourseForm" class="hidden add-course-form">
+        <label>اسم المادة أو رقمها<input id="addCourseInput" type="text" placeholder="مثال: 1910011101 أو خوارزميات"></label>
+        <button id="addCourseConfirm" type="button" class="btn-primary-compact">بحث وإضافة</button>
+      </div>
     </section>
 
     <section id="conflictsPanel" class="panel hidden">
