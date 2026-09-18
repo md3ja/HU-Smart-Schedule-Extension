@@ -8,18 +8,20 @@
 </head>
 <body>
   <main>
-    <header>
+    <header class="app-header">
       <div class="header-top">
         <div class="header-titles">
           <h1>HU Smart Schedule</h1>
           <p class="subtitle-primary">شوف جدولك قبل التسجيل</p>
           <p class="subtitle-secondary">من تعارض لجدول مرتب</p>
         </div>
-        <button id="openTab" class="btn-open-tab" type="button" title="فتح بصفحة كاملة">فتح بصفحة كاملة</button>
+        <div class="header-utility">
+          <button id="openTab" class="btn-open-tab" type="button" title="فتح بصفحة كاملة">فتح بصفحة كاملة</button>
+        </div>
       </div>
     </header>
 
-    <section class="panel">
+    <section class="panel search-panel">
       <div class="two">
         <label>
           السنة
@@ -37,17 +39,12 @@
 
       <label>
         المواد — مادة بكل سطر
-        <textarea id="courses" rows="8" spellcheck="false">استرجاع المعلومات
-1910011423 | الحوسبة المتوازية والموزعة
-الروبوتات المتنقلة الذكية
-مشروع في علم البيانات والذكاء الاصطناعي (1)
-مختبر مقدمة في البرمجة
-القيادة والمسؤولية المجتمعية</textarea>
+        <textarea id="courses" rows="8" spellcheck="false" placeholder="مثال (مادة بكل سطر - رقم أو اسم):&#10;1910011423&#10;استرجاع المعلومات&#10;Java&#10;لاب C++"></textarea>
       </label>
       <p class="hint">تقدر تكتب رقم المادة، اسمها، أو: <b>رقم المادة | الاسم</b>.</p>
     </section>
 
-    <section class="panel">
+    <section class="panel preferences-panel">
       <h2>تفضيلات الجدول</h2>
       <div class="two">
         <label>
@@ -105,9 +102,12 @@
       <button id="continueWithoutUnavailable" type="button">متابعة بدون المواد غير المطروحة</button>
     </section>
 
-    <section id="sectionsPanel" class="panel hidden">
-      <h2>كل الشعب والتواقيت</h2>
-      <div id="sections"></div>
+    <section id="sectionsPanel" class="panel hidden collapsible-panel">
+      <button type="button" class="collapsible-header" id="sectionsToggle" aria-expanded="true" aria-controls="sections">
+        <h2>كل الشعب والتواقيت</h2>
+        <span class="collapse-icon" aria-hidden="true">▾</span>
+      </button>
+      <div id="sections" class="collapsible-content"></div>
     </section>
 
     <section id="workflowPanel" class="panel workflow-panel hidden">
@@ -125,20 +125,23 @@
       </div>
     </section>
 
-    <section id="conflictsPanel" class="panel hidden">
-      <h2>الشعب المتعارضة</h2>
-      <div id="sectionConflicts"></div>
+    <section id="conflictsPanel" class="panel hidden collapsible-panel">
+      <button type="button" class="collapsible-header" id="conflictsToggle" aria-expanded="true" aria-controls="sectionConflicts">
+        <h2>الشعب المتعارضة</h2>
+        <span class="collapse-icon" aria-hidden="true">▾</span>
+      </button>
+      <div id="sectionConflicts" class="collapsible-content"></div>
     </section>
 
-    <section id="schedulesPanel" class="panel hidden">
+    <section id="schedulesPanel" class="panel results-panel hidden">
       <h2>أفضل الجداول المقترحة</h2>
       <div class="break-controls">
         <h3>الاستراحات المتاحة</h3>
         <p class="hint">تتحقق الاستراحة في كل أيام الحضور الوجاهي النشطة ضمن المجموعة. اليوم بلا حضور وجاهي لا يُحسب استراحة.</p>
         <label>تصفية الجداول حسب
           <select id="breakMode">
-            <option value="all">كل الاستراحات المحددة</option>
-            <option value="any">أي استراحة محددة</option>
+            <option value="all">يجب تحقيق جميع الاستراحات المختارة</option>
+            <option value="any">يكفي تحقيق أي استراحة مختارة</option>
           </select>
         </label>
         <div id="breakFilters"></div>

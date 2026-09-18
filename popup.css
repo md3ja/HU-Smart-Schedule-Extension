@@ -1,21 +1,113 @@
+/* ==========================================================================
+   HU Smart Schedule — Aïdea Visual Identity (V1.4 Refinement)
+   Visual Hierarchy:
+     1. Black / Near-Black: Dominant Canvas
+     2. Aïdea Yellow (#F1EE0D): Primary Brand Accent
+     3. Aïdea Teal (#01B4AE): Secondary Brand Accent
+     4. Aïdea Pink (#EB4374): Tertiary Signature Accent
+   Functional Semantics:
+     Green: Available / Success
+     Orange: Unavailable / Warning
+     Red: Conflict / Error / Destructive
+   ========================================================================== */
 
 :root {
-  font-family: Arial, "Segoe UI", Tahoma, sans-serif;
-  color: #18202a;
-  background: #f5f7fa;
+  /* Core Aïdea Brand Palette */
+  --aidea-black: #000000;
+  --aidea-yellow: #F1EE0D;
+  --aidea-yellow-hover: #fffb1a;
+  --aidea-yellow-active: #dfdb0b;
+  --aidea-yellow-subtle: rgba(241, 238, 13, 0.12);
+  --aidea-yellow-border: rgba(241, 238, 13, 0.35);
+
+  --aidea-teal: #01B4AE;
+  --aidea-teal-hover: #1cdcd5;
+  --aidea-teal-subtle: rgba(1, 180, 174, 0.12);
+  --aidea-teal-border: rgba(1, 180, 174, 0.35);
+
+  --aidea-pink: #EB4374;
+  --aidea-pink-hover: #f16892;
+  --aidea-pink-subtle: rgba(235, 67, 116, 0.12);
+  --aidea-pink-border: rgba(235, 67, 116, 0.35);
+
+  --aidea-white: #FFFFFF;
+
+  /* Dark UI Surfaces & Backgrounds */
+  --bg-app: #08090c;
+  --bg-surface: #111319;
+  --bg-surface-elevated: #181b24;
+  --bg-surface-input: #0d0f14;
+  --bg-surface-hover: #1f232f;
+  --bg-surface-active: #272c3b;
+
+  /* Borders & Dividers */
+  --border-subtle: #1e222d;
+  --border-default: #2d3342;
+  --border-hover: #434c60;
+  --border-focus: #F1EE0D;
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #000000;
+
+  /* Functional / Semantic Colors (Strictly Preserved) */
+  --semantic-green: #22c55e;
+  --semantic-green-bg: rgba(34, 197, 94, 0.12);
+  --semantic-green-border: rgba(34, 197, 94, 0.35);
+  --semantic-green-text: #4ade80;
+
+  --semantic-orange: #f97316;
+  --semantic-orange-bg: rgba(249, 115, 22, 0.12);
+  --semantic-orange-border: rgba(249, 115, 22, 0.35);
+  --semantic-orange-text: #fb923c;
+
+  --semantic-red: #ef4444;
+  --semantic-red-bg: rgba(239, 68, 68, 0.12);
+  --semantic-red-border: rgba(239, 68, 68, 0.35);
+  --semantic-red-text: #f87171;
+
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-app);
 }
-* { box-sizing: border-box; }
-/* Keep Chrome's popup bounds independent of content and scrollbar changes. */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Sleek Dark Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #08090c;
+}
+::-webkit-scrollbar-thumb {
+  background: #232733;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #363d4f;
+}
+
+/* Popup Sizing & Standalone Tab Handling */
 html, body {
   margin: 0;
-  width: 590px;
-  min-width: 590px;
-  max-width: 590px;
-  height: 700px;
-  min-height: 700px;
-  max-height: 700px;
+  width: 720px;
+  min-width: 720px;
+  max-width: 720px;
+  height: 600px;
+  min-height: 600px;
+  max-height: 600px;
   overflow: hidden;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  color-scheme: dark;
 }
+
 html.standalone-tab, body.standalone-tab {
   width: 100%;
   min-width: unset;
@@ -25,30 +117,49 @@ html.standalone-tab, body.standalone-tab {
   max-height: 100%;
 }
 html.standalone-tab {
-  background: #edf2f7;
+  background: #050608;
 }
 body.standalone-tab {
-  max-width: 640px;
+  max-width: 840px;
   margin: 0 auto;
-  box-shadow: 0 0 24px rgba(0,0,0,.06);
+  border-inline: 1px solid var(--border-subtle);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.85);
 }
 body.standalone-tab .btn-open-tab {
   display: none !important;
 }
-body {
-  background: #f5f7fa;
-}
+
 main {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   padding: 14px;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
   scrollbar-gutter: stable;
 }
+
+/* ==========================================================================
+   Header & Aïdea Brand Signature
+   ========================================================================== */
 header {
-  padding: 4px 2px 12px;
+  padding: 4px 2px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 14px;
+  position: relative;
 }
+/* Aïdea Micro-Accent Line under header */
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 54px;
+  height: 2.5px;
+  background: linear-gradient(to left, var(--aidea-yellow) 33%, var(--aidea-pink) 33% 66%, var(--aidea-teal) 66%);
+  border-radius: 999px;
+}
+
 .header-top {
   display: flex;
   justify-content: space-between;
@@ -59,151 +170,395 @@ header {
   flex: 1;
   min-width: 0;
 }
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 h1 {
   margin: 0;
   font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
   line-height: 1.2;
   white-space: nowrap;
+  letter-spacing: -0.02em;
 }
+.aidea-badge {
+  background: #000000;
+  color: var(--aidea-yellow);
+  border: 1px solid var(--aidea-yellow);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 10px rgba(241, 238, 13, 0.25);
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+/* Micro-signature 3-dots: Yellow • Pink • Teal */
+.aidea-sig-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: 4px;
+  vertical-align: middle;
+}
+.sig-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.sig-dot.dot-yellow {
+  background: var(--aidea-yellow);
+  box-shadow: 0 0 5px rgba(241, 238, 13, 0.7);
+}
+.sig-dot.dot-pink {
+  background: var(--aidea-pink);
+  box-shadow: 0 0 5px rgba(235, 67, 116, 0.7);
+}
+.sig-dot.dot-teal {
+  background: var(--aidea-teal);
+  box-shadow: 0 0 5px rgba(1, 180, 174, 0.7);
+}
+
 .subtitle-primary {
   margin: 4px 0 0;
-  color: #2b4c7e;
+  color: var(--aidea-yellow);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
 }
 .subtitle-secondary {
   margin: 2px 0 0;
-  color: #6d7888;
+  color: #e28ca7; /* Subtle Aïdea rose-pink tint */
   font-size: 11.5px;
   line-height: 1.35;
+  font-weight: 500;
 }
+
+/* Secondary Open Tab Button (Teal Accent) */
 .btn-open-tab {
   width: auto;
   max-width: fit-content;
   align-self: flex-start;
-  background: #f0f4f8;
-  color: #2b4c7e;
-  border: 1px solid #cbd5e1;
+  background: rgba(1, 180, 174, 0.06);
+  color: #2dd4bf;
+  border: 1px solid rgba(1, 180, 174, 0.35);
   border-radius: 6px;
-  padding: 5px 10px;
+  padding: 6px 11px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
   flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 .btn-open-tab:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
+  background: rgba(1, 180, 174, 0.18);
+  border-color: var(--aidea-teal);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(1, 180, 174, 0.25);
 }
 .btn-open-tab:focus-visible {
-  outline: 2px solid #2b4c7e;
+  outline: 2px solid var(--aidea-teal);
   outline-offset: 1px;
 }
-h2 { font-size: 16px; margin: 0 0 12px; }
+
+/* ==========================================================================
+   Panels & Layout
+   ========================================================================== */
 .panel {
-  background: white;
-  border: 1px solid #dfe4ea;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  min-width: 0;
 }
+
+/* Collapsible Panels */
+.collapsible-panel.is-collapsed {
+  padding-bottom: 14px;
+}
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: right;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+.collapsible-header:focus-visible {
+  outline: 2px solid var(--aidea-yellow);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.collapsible-header h2 {
+  margin: 0;
+}
+.collapse-icon {
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+.collapsible-header:hover .collapse-icon {
+  color: var(--aidea-yellow);
+}
+.collapsible-panel.is-collapsed .collapse-icon {
+  transform: rotate(90deg);
+}
+.collapsible-panel.is-collapsed .collapsible-content {
+  display: none !important;
+}
+.collapsible-panel:not(.is-collapsed) .collapsible-header {
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Section Title Micro-Markers (Subtle Aïdea Hierarchy) */
+h2::before, .workflow-title::before, .break-controls h3::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--aidea-yellow);
+  flex-shrink: 0;
+}
+
+/* Specific Section Markers */
+section:has(#notBefore) h2::before {
+  background: var(--aidea-pink); /* Preferences: Pink Marker */
+}
+#sectionsPanel h2::before {
+  background: var(--aidea-teal); /* All Sections: Teal Marker */
+}
+.workflow-title::before {
+  background: var(--aidea-teal); /* Course Management: Teal Marker */
+}
+#conflictsPanel h2::before {
+  background: var(--semantic-red); /* Conflicts: Semantic Red */
+}
+#schedulesPanel > h2::before {
+  background: var(--aidea-yellow); /* Schedules: Aïdea Yellow */
+}
+.break-controls h3::before {
+  background: var(--aidea-pink); /* Break Filters: Pink Marker */
+}
+#collegePromptTitle::before {
+  background: var(--aidea-teal); /* College Prompt: Teal Marker */
+}
+
 label {
   display: block;
   font-size: 13px;
   font-weight: 700;
+  color: #e2e8f0;
   margin-bottom: 10px;
 }
+
 input, select, textarea {
   width: 100%;
   margin-top: 6px;
-  border: 1px solid #cfd6df;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 9px 10px;
   font: inherit;
-  background: #fff;
+  background: var(--bg-surface-input);
+  color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--aidea-yellow);
+  outline: 2px solid rgba(241, 238, 13, 0.35);
+  outline-offset: 1px;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+select option {
+  background: var(--bg-surface);
+  color: #ffffff;
+}
+
 textarea {
   resize: vertical;
   min-height: 145px;
   direction: rtl;
+  line-height: 1.6;
 }
+
 .two {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+
 .hint {
   margin: -3px 0 0;
-  color: #6d7784;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.55;
 }
+
 fieldset {
-  border: 1px solid #dfe4ea;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 9px;
   margin: 4px 0 12px;
+  padding: 10px 12px;
 }
-legend { font-size: 12px; font-weight: 700; }
+legend {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+legend::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--aidea-pink);
+  opacity: 0.8;
+}
 .days {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px 12px;
+  gap: 6px 14px;
 }
 .days label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   margin: 0;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.days label:hover {
+  color: var(--aidea-yellow);
 }
 .days input {
   width: auto;
   margin: 0;
+  accent-color: var(--aidea-yellow);
+  cursor: pointer;
 }
-button {
+
+/* ==========================================================================
+   Primary Action Button (Clean Pure Aïdea Yellow #F1EE0D)
+   ========================================================================== */
+#run, button.btn-primary {
   width: 100%;
   border: 0;
   border-radius: 9px;
-  padding: 11px 14px;
+  padding: 12px 14px;
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
-  background: #172b4d;
-  color: #fff;
+  background: #F1EE0D !important;
+  color: #000000 !important;
+  font-family: inherit;
+  box-shadow: 0 4px 14px rgba(241, 238, 13, 0.22);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
-button:disabled { opacity: .55; cursor: wait; }
+#run:hover, button.btn-primary:hover {
+  background: #fffb1a !important;
+  box-shadow: 0 4px 18px rgba(241, 238, 13, 0.35);
+  transform: translateY(-1px);
+}
+#run:active, button.btn-primary:active {
+  background: #dfdb0b !important;
+  transform: translateY(0);
+}
+/* Enabled button is never faded or olive */
+#run:not(:disabled) {
+  opacity: 1 !important;
+}
+/* Disabled / Busy button uses clean dark slate without opacity wash */
+#run:disabled, button.btn-primary:disabled {
+  background: #232733 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+  cursor: wait !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
 .status {
   min-height: 18px;
-  margin-top: 9px;
+  margin-top: 10px;
   font-size: 12px;
   line-height: 1.6;
   white-space: pre-wrap;
+  color: var(--text-secondary);
 }
-.status.error { color: #a32121; }
-.status.ok { color: #126b3a; }
-.hidden { display: none; }
+.status.error {
+  color: var(--semantic-red-text);
+  font-weight: 700;
+}
+.status.ok {
+  color: var(--semantic-green-text);
+  font-weight: 700;
+}
+.hidden {
+  display: none !important;
+}
 
+/* ==========================================================================
+   Course Cards & Sections Panel
+   ========================================================================== */
 .course-card, .schedule-card {
-  border: 1px solid #e0e5eb;
+  border: 1px solid var(--border-subtle);
   border-radius: 9px;
-  margin: 9px 0;
+  margin: 10px 0;
   overflow: hidden;
+  min-width: 0;
 }
 .course-card {
-  border-inline-start: 4px solid #16a34a;
-  background: #ffffff;
+  border-inline-start: 4px solid var(--semantic-green);
+  background: var(--bg-surface);
 }
+
 .course-title, .schedule-title {
-  background: #f8fafc;
-  padding: 8px 12px;
+  background: var(--bg-surface-elevated);
+  padding: 9px 12px;
   font-weight: 800;
   font-size: 13px;
+  color: #ffffff;
 }
 .course-title {
   cursor: pointer;
@@ -213,24 +568,67 @@ button:disabled { opacity: .55; cursor: wait; }
   flex-wrap: wrap;
   gap: 8px;
   line-height: 1.5;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s ease;
 }
 .course-title:hover {
-  background: #f1f5f9;
+  background: var(--bg-surface-hover);
 }
-.course-header-info {
+.course-title::-webkit-details-marker {
+  display: none;
+}
+.course-title::before {
+  content: "▾";
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.15s ease;
+  margin-inline-end: 4px;
+}
+details:not([open]) > .course-title::before,
+.course-card.is-collapsed .course-title::before {
+  transform: rotate(-90deg);
+}
+
+.course-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #151820;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-inline-end: 10px;
+}
+.course-card.is-collapsed .course-card-header {
+  border-bottom: none;
+}
+.course-card.is-collapsed .course-sections-list {
+  display: none;
+}
+button.course-title {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+button.course-title:hover {
+  background: var(--bg-surface-hover);
+}
+
+.course-header-left {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  min-width: 0;
-  flex: 1;
 }
 .course-header-name {
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   margin-inline-end: 4px;
 }
+
 .btn-remove-course {
   width: auto !important;
   margin: 0 !important;
@@ -238,14 +636,15 @@ button:disabled { opacity: .55; cursor: wait; }
   font-size: 11px !important;
   font-weight: 700 !important;
   border-radius: 6px !important;
-  background: #ffffff !important;
-  color: #b91c1c !important;
-  border: 1px solid #fca5a5 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: var(--semantic-red-text) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
   cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 4px !important;
-  box-shadow: 0 1px 2px rgba(185, 28, 28, 0.05) !important;
+  box-shadow: none !important;
+  transform: none !important;
   transition: all 0.15s ease !important;
   flex-shrink: 0;
   white-space: nowrap;
@@ -255,22 +654,25 @@ button:disabled { opacity: .55; cursor: wait; }
   font-size: 11px;
 }
 .btn-remove-course:hover, .btn-remove-course:focus-visible {
-  background: #fef2f2 !important;
-  border-color: #ef4444 !important;
-  color: #991b1b !important;
-  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15) !important;
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: var(--semantic-red) !important;
+  color: #fca5a5 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25) !important;
 }
+
 .section {
-  padding: 8px 10px;
-  border-top: 1px solid #edf0f3;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-subtle);
   font-size: 12px;
   line-height: 1.65;
+  color: #cbd5e1;
 }
 .section .meet {
   font-weight: 700;
+  color: #ffffff;
 }
 .raw {
-  color: #687482;
+  color: var(--text-muted);
   font-size: 10px;
   margin-top: 3px;
   max-height: 46px;
@@ -279,275 +681,93 @@ button:disabled { opacity: .55; cursor: wait; }
 .badge {
   display: inline-block;
   border-radius: 999px;
-  background: #e9eef6;
+  background: #1e222d;
+  color: #cbd5e1;
+  border: 1px solid #2d3342;
+  font-size: 11px;
+  font-weight: 700;
   padding: 2px 7px;
-  margin-inline-start: 5px;
-  font-size: 10px;
-  font-weight: 700;
-}
-.warn { color: #8a5b00; }
-.good { color: #146b40; }
-.schedule-body { padding: 9px 10px; }
-.metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 8px;
-}
-.small { font-size: 10px; color: #687482; }
-
-/* Keep all result expansion inside the fixed popup's main scroll container. */
-.panel, .schedule-card, .schedule-body { min-width: 0; }
-.course-title { cursor: pointer; line-height: 1.8; }
-.notice { font-size: 11px; line-height: 1.7; margin: 8px 0; }
-.conflict-total { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-#sectionConflicts > .small { line-height: 1.7; }
-.conflict-group {
-  margin-top: 8px;
-  border: 1px solid #eadcda;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.conflict-group summary {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px;
-  background: #fff8f6;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 1.65;
-  font-weight: 700;
-}
-.conflict-group summary::before { content: '+'; flex: none; }
-.conflict-group[open] summary::before { content: '−'; }
-.conflict-group summary > span:first-of-type { flex: 1; min-width: 0; }
-.conflict-group summary .badge { white-space: nowrap; background: #f8e8e3; color: #853c2c; }
-.conflict-pair { padding: 10px; border-top: 1px solid #eee3df; font-size: 11px; line-height: 1.7; }
-.conflict-intervals { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
-.conflict-intervals > span { padding: 2px 6px; border-radius: 4px; background: #fff0eb; color: #853c2c; }
-.schedule-card { margin: 0 0 16px; border-color: #ccd8e6; }
-.schedule-title { padding: 12px 10px; background: #f0f5fb; }
-.schedule-title h3 { margin: 0 0 9px; font-size: 15px; }
-.schedule-title .metrics { margin: 0; gap: 5px; }
-.schedule-title .badge { margin: 0; padding: 4px 7px; background: #fff; border: 1px solid #dce5ef; font-weight: 600; }
-.calendar-scroll { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; border: 1px solid #dce3ed; border-radius: 7px; }
-.weekly-calendar { min-width: 480px; direction: rtl; }
-.calendar-header, .calendar-body { display: grid; grid-template-columns: 40px repeat(5, minmax(88px, 1fr)); }
-.calendar-header { background: #f5f8fc; border-bottom: 1px solid #cbd6e5; }
-.calendar-header > span, .calendar-day-heading-wrap { padding: 10px 0; text-align: center; font-size: 11px; font-weight: 700; }
-.calendar-day-heading-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.calendar-body { height: var(--calendar-height); }
-.time-axis { position: relative; background: #fafbfd; color: #63748a; }
-.time-tick { position: absolute; inset-inline: 0; text-align: center; font-size: 9px; transform: translateY(-50%); line-height: 14px; }
-.first-tick { transform: none; }
-.last-tick { transform: translateY(-100%); }
-.calendar-day {
-  position: relative;
-  min-width: 0;
-  border-inline-start: 1px solid #e0e6ed;
-  background-image: linear-gradient(to bottom, #dbe3ed 1px, transparent 1px), linear-gradient(to bottom, #eef2f6 1px, transparent 1px);
-  background-size: 100% var(--hour-height), 100% calc(var(--hour-height) / 2);
-}
-.course-color-0 { --course-bg: #e8f1ff; --course-border: #4878ba; --course-text: #254c82; }
-.course-color-1 { --course-bg: #e5f5ef; --course-border: #37846c; --course-text: #235e4b; }
-.course-color-2 { --course-bg: #f1eafb; --course-border: #8763b3; --course-text: #68448d; }
-.course-color-3 { --course-bg: #fff1dc; --course-border: #ba8533; --course-text: #7e581f; }
-.course-color-4 { --course-bg: #e3f3f8; --course-border: #3e879e; --course-text: #285f73; }
-.course-color-5 { --course-bg: #fbe9ee; --course-border: #b3617b; --course-text: #893c55; }
-.calendar-meeting {
-  position: absolute;
-  z-index: 2;
-  inset-inline: 1px;
-  width: calc(100% - 2px);
-  margin: 0;
-  padding: 3px 4px;
-  border: 1px solid #fff;
-  border-inline-start: 3px solid var(--course-border);
-  border-radius: 5px;
-  background: var(--course-bg);
-  color: var(--course-text);
-  text-align: start;
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 1.2;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 2px;
-}
-.meeting-course { font-weight: 700; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex: none; }
-.meeting-section, .meeting-instructor { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: none; }
-.meeting-instructor { font-size: 9px; }
-.meeting-time { margin-top: auto; font-size: 9px; font-weight: 700; white-space: nowrap; flex: none; text-align: center; }
-.calendar-meeting:hover { filter: brightness(.97); }
-.calendar-help { margin: 8px 0; line-height: 1.7; }
-.details-toggle { padding: 9px; background: #f5f8fc; border: 1px solid #ccd8e6; color: #294765; font-size: 12px; }
-.schedule-details { margin-top: 9px; }
-.schedule-section-detail { padding: 10px; margin-top: 7px; background: var(--course-bg); border-inline-start: 3px solid var(--course-border); border-radius: 6px; font-size: 11px; line-height: 1.7; }
-.schedule-section-detail h4 { margin: 0 0 3px; font-size: 12px; }
-.detail-meetings { margin-top: 3px; }
-button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .schedule-section-detail:focus-visible { outline: 2px solid #396baf; outline-offset: -2px; }
-
-/* Enhanced Schedule Visualization & Break Indicators */
-.calendar-meeting.meeting-remote {
-  border-inline-start-style: dashed;
-  border-inline-start-width: 4px;
-  background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.4) 10px, rgba(255,255,255,0.4) 20px);
-}
-.remote-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  background: rgba(0,0,0,0.06);
-  padding: 1px 4px;
-  border-radius: 3px;
-  font-size: 8px;
-  font-weight: 700;
-  width: fit-content;
+  margin-inline-end: 4px;
+  white-space: nowrap;
 }
 
-.calendar-break {
-  position: absolute;
-  inset-inline: 4px;
-  width: calc(100% - 8px);
-  border: 1px dashed #cfd8e3;
-  background: rgba(230, 237, 245, 0.45);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 9px;
-  font-weight: 600;
-  pointer-events: none;
-  z-index: 1;
+/* Semantic Availability Badges (Strictly Preserved) */
+.availability-offered {
+  background: var(--semantic-green-bg) !important;
+  color: var(--semantic-green-text) !important;
+  border: 1px solid var(--semantic-green-border) !important;
 }
-.break-label {
-  background: #ffffff;
-  padding: 1px 5px;
-  border-radius: 3px;
-  border: 1px solid #dce4ed;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+.availability-offered::before {
+  content: "✓ ";
+  font-weight: 900;
+}
+.availability-missing {
+  background: var(--semantic-orange-bg) !important;
+  color: var(--semantic-orange-text) !important;
+  border: 1px solid var(--semantic-orange-border) !important;
+}
+.availability-missing::before {
+  content: "✕ ";
+  font-weight: 900;
 }
 
-.calendar-day-heading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
+/* ==========================================================================
+   Smart Search Choice Modal
+   ========================================================================== */
+.smart-search-choice {
+  background: #161822;
+  border: 1px solid var(--border-default);
+  border-top: 2px solid var(--aidea-pink); /* Pink Accent for Smart Search */
+  border-radius: 10px;
+  padding: 14px;
+  margin: 12px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
-.day-break-badge {
-  font-size: 9px;
-  font-weight: 600;
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-.day-break-badge.has-break { background: #fef3c7; color: #92400e; }
-.day-break-badge.solid { background: #dcfce7; color: #166534; }
-.day-break-badge.off { background: #f1f5f9; color: #64748b; }
-
-.schedule-title-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.schedule-title-top h3 { margin: 0; font-size: 15px; }
-
-.print-card-btn {
-  width: auto;
-  padding: 4px 9px;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #1e3a63;
-  border: 1px solid #cbdcf2;
-  cursor: pointer;
-}
-.print-card-btn:hover { background: #f0f5fc; }
-
-.daily-breaks-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  margin-top: 6px;
-  font-size: 11px;
-  align-items: center;
-  color: #4b5563;
-}
-.daily-breaks-label { font-weight: 700; }
-.day-break-pill {
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-}
-.day-break-pill.warn-break { background: #fef3c7; color: #92400e; font-weight: 600; }
-.day-break-pill.no-break { background: #f3f4f6; color: #4b5563; }
-
-.panel-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #edf0f3;
-}
-.export-btn {
-  width: auto;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 6px;
-  background: #f0f5fb;
-  color: #1a365d;
-  border: 1px solid #cbdcf2;
-  cursor: pointer;
-}
-.export-btn:hover { background: #e2ecf9; border-color: #9bbfe8; }
-.export-btn.export-full-btn {
-  background: #1e3a63;
+.smart-search-choice h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 800;
   color: #ffffff;
-  border-color: #1e3a63;
-}
-.export-btn.export-full-btn:hover { background: #142845; }
-
-.schedule-action-bar {
   display: flex;
+  align-items: center;
   gap: 6px;
-  margin-top: 8px;
 }
-.schedule-action-bar button {
-  flex: 1;
+.smart-search-choice h3::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--aidea-pink);
 }
-.copy-btn {
-  background: #f8fafc;
-  color: #334155;
-  border: 1px solid #cbd5e1;
-  font-size: 12px;
-  padding: 9px;
+.smart-search-choice p {
+  margin: 0 0 10px;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
-.copy-btn:hover { background: #f1f5f9; }
-
-.smart-search-choice { margin-top: 12px; padding: 12px; border: 1px solid #94a3b8; border-radius: 10px; background: #f8fafc; }
-.smart-search-choice h3 { margin: 0 0 8px; font-size: 14px; }
-.smart-search-choice p { font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
-.smart-search-options { display: grid; gap: 8px; max-height: 280px; overflow-y: auto; padding: 2px; }
+.smart-search-options {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 2px;
+}
 .smart-search-options button, .candidate-card {
   width: 100%;
   margin: 0;
   padding: 10px 12px;
   text-align: right;
-  background: #ffffff;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
+  background: #181b24;
+  color: #ffffff;
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   white-space: normal;
   overflow-wrap: anywhere;
   cursor: pointer;
+  box-shadow: none;
+  transform: none;
   transition: all 0.15s ease;
   display: flex;
   flex-direction: column;
@@ -556,32 +776,32 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
   box-sizing: border-box;
 }
 .candidate-card.candidate-offered {
-  border-inline-start: 4px solid #16a34a;
-  background: #fafdfa;
+  border-inline-start: 4px solid var(--semantic-green);
+  background: #131917;
 }
 .candidate-card.candidate-offered:hover, .candidate-card.candidate-offered:focus-visible {
-  background: #f0fdf4;
-  border-color: #86efac;
-  border-inline-start-color: #15803d;
-  outline: 2px solid #16a34a;
+  background: #172420;
+  border-color: rgba(34, 197, 94, 0.5);
+  border-inline-start-color: var(--semantic-green);
+  outline: 2px solid var(--semantic-green);
   outline-offset: -2px;
 }
 .candidate-card.candidate-missing {
-  border-inline-start: 4px solid #ea580c;
-  background: #fffcf9;
+  border-inline-start: 4px solid var(--semantic-orange);
+  background: #1a1613;
 }
 .candidate-card.candidate-missing:hover, .candidate-card.candidate-missing:focus-visible {
-  background: #fff7ed;
-  border-color: #fdba74;
-  border-inline-start-color: #c2410c;
-  outline: 2px solid #ea580c;
+  background: #251d18;
+  border-color: rgba(249, 115, 22, 0.5);
+  border-inline-start-color: var(--semantic-orange);
+  outline: 2px solid var(--semantic-orange);
   outline-offset: -2px;
 }
 .candidate-name, .smart-search-options strong {
   display: block;
   font-size: 13px;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1.4;
 }
 .candidate-number, .smart-search-options bdi {
@@ -589,116 +809,137 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
   font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 700;
-  color: #475569;
-  background: #f1f5f9;
+  color: #e2e8f0;
+  background: #222735;
   padding: 1px 6px;
   border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #31384a;
 }
 .candidate-context, .smart-search-options small:not(.badge):not(.availability-offered):not(.availability-missing) {
   display: block;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 11px;
   line-height: 1.4;
   font-weight: normal;
 }
-#smartSearchCancel { width: auto !important; margin-top: 10px; padding: 7px 16px; background: #e2e8f0; color: #334155; font-size: 12px; }
-.historical-hint { display: block; margin-top: 6px; color: #64748b; font-size: 12px; }
-
-.availability-offered, .smart-search-options .availability-offered {
-  color: #14532d;
-  background: #dcfce7;
-  border: 1px solid #86efac;
+#smartSearchCancel {
+  width: auto !important;
+  margin-top: 10px;
+  padding: 7px 16px;
+  font-size: 12px;
+  background: #1c202a !important;
+  color: #cbd5e1 !important;
+  border: 1px solid var(--border-default) !important;
   border-radius: 6px;
-  padding: 2px 7px;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  box-shadow: 0 1px 2px rgba(20, 83, 45, 0.05);
+  box-shadow: none !important;
+  transform: none !important;
 }
-.availability-offered::before {
-  content: "✓ ";
-  font-weight: 900;
-  font-size: 10px;
-}
-.availability-missing, .smart-search-options .availability-missing {
-  color: #7c2d12;
-  background: #ffedd5;
-  border: 1px solid #fdba74;
-  border-radius: 6px;
-  padding: 2px 7px;
-  font-size: 10px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  box-shadow: 0 1px 2px rgba(124, 45, 18, 0.05);
-}
-.availability-missing::before {
-  content: "✕ ";
-  font-weight: 900;
-  font-size: 10px;
+#smartSearchCancel:hover {
+  background: #272d3b !important;
+  color: #ffffff !important;
+  border-color: var(--aidea-pink) !important;
 }
 
-#collegeOptions { max-height: 300px; overflow-y: auto; }
+/* ==========================================================================
+   College Filter Prompt (Aïdea Teal Accent)
+   ========================================================================== */
+#collegePrompt {
+  background: #151822;
+  border: 1px solid var(--border-default);
+  border-top: 2px solid var(--aidea-teal); /* Teal Accent on College Modal */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+#collegePromptTitle {
+  color: #ffffff;
+  font-size: 14.5px;
+}
+#collegeOptions {
+  max-height: 300px;
+  overflow-y: auto;
+}
 #collegeOptions button {
   width: 100%;
   margin: 0;
   padding: 9px 12px;
   text-align: right;
-  background: #ffffff;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
+  background: #191c26;
+  color: #ffffff;
+  border: 1px solid var(--border-subtle);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: none;
+  transform: none;
   transition: all 0.15s ease;
 }
 #collegeOptions button:hover, #collegeOptions button:focus-visible {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #1d4ed8;
+  background: #212634;
+  border-color: var(--aidea-yellow);
+  color: var(--aidea-yellow);
 }
 #collegeOptions button[data-faculty="*"] {
-  background: #f8fafc;
+  background: #111319;
   border-style: dashed;
-  color: #475569;
+  border-color: rgba(1, 180, 174, 0.35);
+  color: #2dd4bf;
 }
 #collegeOptions button[data-faculty="*"]:hover {
-  background: #f1f5f9;
-  border-color: #64748b;
-  color: #1e293b;
+  background: rgba(1, 180, 174, 0.15);
+  border-color: var(--aidea-teal);
+  color: #ffffff;
 }
 #cancelCollege {
   width: auto !important;
   margin-top: 10px !important;
   padding: 6px 14px !important;
   font-size: 12px !important;
-  background: #f1f5f9 !important;
-  color: #475569 !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #1c202a !important;
+  color: #f472b6 !important; /* Soft Pink Accent for cancel */
+  border: 1px solid rgba(235, 67, 116, 0.35) !important;
   border-radius: 6px !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 #cancelCollege:hover {
-  background: #e2e8f0 !important;
-  color: #1e293b !important;
+  background: rgba(235, 67, 116, 0.2) !important;
+  border-color: var(--aidea-pink) !important;
+  color: #ffffff !important;
 }
 
-#unavailablePanel { background: #fffbf7; border: 1px solid #fed7aa; border-radius: 9px; padding: 12px 14px; }
-#unavailablePanel h2 { color: #9a3412; font-size: 14px; margin-top: 0; }
-#unavailableCourses { list-style: none; padding: 0; margin: 10px 0; }
+/* ==========================================================================
+   Unavailable Courses Panel (Semantic Orange)
+   ========================================================================== */
+#unavailablePanel {
+  background: rgba(249, 115, 22, 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: 9px;
+  padding: 12px 14px;
+}
+#unavailablePanel h2 {
+  color: var(--semantic-orange-text);
+  font-size: 14px;
+  margin-top: 0;
+}
+#unavailableNotice {
+  color: #fbd5b5;
+  font-size: 12px;
+}
+#unavailableCourses {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
 #unavailableCourses li {
-  background: #ffffff;
-  border: 1px solid #fed7aa;
-  border-inline-start: 4px solid #ea580c;
+  background: #151821;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-inline-start: 4px solid var(--semantic-orange);
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 8px;
   font-size: 12px;
   line-height: 1.6;
+  color: #f8fafc;
 }
 #unavailableCourses li button {
   width: auto !important;
@@ -709,34 +950,40 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
   padding: 5px 12px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  background: #fff7ed !important;
-  color: #c2410c !important;
-  border: 1px solid #fdba74 !important;
+  background: rgba(249, 115, 22, 0.1) !important;
+  color: var(--semantic-orange-text) !important;
+  border: 1px solid rgba(249, 115, 22, 0.3) !important;
   border-radius: 6px !important;
   cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 #unavailableCourses li button:hover {
-  background: #ffedd5 !important;
-  border-color: #ea580c !important;
+  background: rgba(249, 115, 22, 0.2) !important;
+  border-color: var(--semantic-orange) !important;
 }
 #continueWithoutUnavailable {
   width: auto !important;
   padding: 8px 16px !important;
   font-size: 12px !important;
-  font-weight: 700 !important;
-  background: #c2410c !important;
-  color: #ffffff !important;
+  font-weight: 800 !important;
+  background: var(--aidea-yellow) !important;
+  color: #000000 !important;
   border-radius: 6px !important;
   margin-top: 10px !important;
+  box-shadow: 0 4px 12px rgba(241, 238, 13, 0.2) !important;
 }
 #continueWithoutUnavailable:hover {
-  background: #9a3412 !important;
+  background: var(--aidea-yellow-hover) !important;
 }
 
-/* Management block (.workflow-panel) */
+/* ==========================================================================
+   Course Management Card (.workflow-panel)
+   Teal + Pink Symmetric Secondary Controls
+   ========================================================================== */
 .workflow-panel {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 9px;
   padding: 12px 14px;
   margin: 10px 0;
@@ -753,12 +1000,12 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
   margin: 0;
   font-size: 13px;
   font-weight: 800;
-  color: #1e293b;
+  color: #ffffff;
 }
 #workflowScope {
   margin: 0;
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 .workflow-actions {
   display: flex;
@@ -772,68 +1019,1196 @@ button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .sc
   font-size: 12px !important;
   font-weight: 700 !important;
   border-radius: 6px !important;
-  background: #ffffff !important;
-  color: #1e293b !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #181b24 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid var(--border-default) !important;
   cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none !important;
   transition: all 0.15s ease !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
 }
-.btn-workflow-action:hover, .btn-workflow-action:focus-visible {
-  background: #f1f5f9 !important;
-  border-color: #94a3b8 !important;
-  color: #0f172a !important;
-}
+/* + إضافة مادة: Teal Secondary Action */
 #showAddCourse {
-  color: #1d4ed8 !important;
-  border-color: #93c5fd !important;
-  background: #eff6ff !important;
+  color: var(--aidea-teal) !important;
+  border-color: var(--aidea-teal-border) !important;
+  background: var(--aidea-teal-subtle) !important;
 }
 #showAddCourse:hover, #showAddCourse:focus-visible {
-  background: #dbeafe !important;
-  border-color: #60a5fa !important;
-  color: #1e40af !important;
+  background: #01B4AE !important;
+  border-color: var(--aidea-teal) !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(1, 180, 174, 0.35) !important;
 }
+/* تغيير الكلية: Pink Secondary Action */
+#changeCollege {
+  color: var(--aidea-pink) !important;
+  border-color: var(--aidea-pink-border) !important;
+  background: var(--aidea-pink-subtle) !important;
+}
+#changeCollege:hover, #changeCollege:focus-visible {
+  background: #EB4374 !important;
+  border-color: var(--aidea-pink) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(235, 67, 116, 0.35) !important;
+}
+
 .add-course-form {
   margin-top: 10px;
-  padding: 10px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
 }
 .add-course-form label {
-  flex: 1;
-  min-width: 180px;
-  margin: 0;
   font-size: 12px;
-  font-weight: 700;
-  color: #334155;
 }
-.add-course-form input {
-  margin-top: 4px;
+.add-course-form input:focus {
+  border-color: var(--aidea-teal);
+  outline: 2px solid rgba(1, 180, 174, 0.35);
 }
 .btn-primary-compact {
   width: auto !important;
-  margin: 0 !important;
-  padding: 8px 16px !important;
+  margin-top: 8px !important;
+  padding: 7px 16px !important;
   font-size: 12px !important;
-  font-weight: 700 !important;
-  background: #172b4d !important;
-  color: #ffffff !important;
+  font-weight: 800 !important;
+  background: var(--aidea-yellow) !important;
+  color: #000000 !important;
   border-radius: 6px !important;
-  height: 38px;
-  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(241, 238, 13, 0.25) !important;
 }
 .btn-primary-compact:hover {
-  background: #091e42 !important;
+  background: var(--aidea-yellow-hover) !important;
 }
 
-.break-controls { margin-bottom: 16px; }
-#breakFilters { max-height: 320px; overflow-y: auto; }
-#breakFilters fieldset { display: flex; flex-wrap: wrap; gap: 8px; }
-#breakFilters label { display: flex; align-items: center; gap: 6px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; }
-#breakFilters input { width: auto; }
+/* ==========================================================================
+   Conflicts Panel (Semantic Red)
+   ========================================================================== */
+#conflictsPanel {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+#conflictsPanel h2 {
+  color: var(--semantic-red-text);
+}
+.conflict-notice {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--semantic-red-text);
+  margin-bottom: 8px;
+}
+.conflict-group {
+  margin-bottom: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #141113;
+}
+.conflict-group summary {
+  padding: 8px 10px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.conflict-group summary::-webkit-details-marker {
+  display: none;
+}
+.conflict-group summary::before {
+  content: "+ ";
+  color: var(--semantic-red-text);
+}
+.conflict-group[open] summary::before {
+  content: "− ";
+}
+.conflict-item {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(239, 68, 68, 0.15);
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+.conflict-item .overlap-badge {
+  display: inline-block;
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* Secondary Export Actions in Panels */
+.btn-export-secondary {
+  width: auto !important;
+  margin: 0 0 10px !important;
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: #171a23 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: all 0.15s ease !important;
+}
+.btn-export-secondary:hover {
+  background: #202432 !important;
+  border-color: var(--aidea-teal) !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Schedule Proposal Card
+   ========================================================================== */
+.schedules-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.schedules-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.schedules-export-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.btn-export-all {
+  width: auto !important;
+  margin: 0 !important;
+  padding: 5px 11px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: #171a23 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.btn-export-all:hover {
+  background: #202432 !important;
+  border-color: var(--aidea-yellow) !important;
+  color: var(--aidea-yellow) !important;
+}
+
+.schedule-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.schedule-title {
+  background: var(--bg-surface-elevated);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.schedule-title-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.schedule-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--aidea-yellow);
+}
+.print-card-btn {
+  width: auto !important;
+  margin: 0 !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: rgba(241, 238, 13, 0.06) !important;
+  color: #fef08a !important;
+  border: 1px solid rgba(241, 238, 13, 0.35) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: all 0.15s ease !important;
+}
+.print-card-btn:hover {
+  background: rgba(241, 238, 13, 0.2) !important;
+  border-color: var(--aidea-yellow) !important;
+  color: #ffffff !important;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+.metrics .badge {
+  background: #181b24;
+  border: 1px solid #2d3342;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+}
+
+.daily-breaks-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.daily-breaks-label {
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-inline-end: 2px;
+}
+.day-break-pill {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.day-break-pill.no-break {
+  background: #181b24;
+  color: #94a3b8;
+  border: 1px solid #252a37;
+}
+.day-break-pill.warn-break {
+  background: rgba(241, 238, 13, 0.1);
+  color: #fef08a;
+  border: 1px solid rgba(241, 238, 13, 0.3);
+}
+
+.schedule-body {
+  padding: 12px;
+}
+.schedule-action-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.schedule-action-bar button {
+  width: 50%;
+}
+.copy-btn {
+  background: rgba(1, 180, 174, 0.06) !important;
+  color: #2dd4bf !important;
+  border: 1px solid rgba(1, 180, 174, 0.35) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.copy-btn:hover {
+  background: rgba(1, 180, 174, 0.18) !important;
+  border-color: var(--aidea-teal) !important;
+  color: #ffffff !important;
+}
+.details-toggle {
+  background: #181b24 !important;
+  color: #ffffff !important;
+  border: 1px solid var(--border-default) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.details-toggle:hover {
+  background: #222633 !important;
+  border-color: var(--aidea-yellow) !important;
+  color: var(--aidea-yellow) !important;
+}
+
+/* ==========================================================================
+   Controlled Aïdea Extended Course Palette (Calendar & Schedule)
+   Slot 0: Primary Yellow (#F1EE0D)
+   Slot 1: Primary Teal (#01B4AE)
+   Slot 2: Primary Pink (#EB4374)
+   Slots 3–5: Muted variants of the same three identity colors
+   ========================================================================== */
+.course-color-0 {
+  --course-bg: #1b1c19;
+  --course-border: #F1EE0D;
+  --course-text: #ffffff;
+  --course-accent: #F1EE0D;
+}
+.course-color-1 {
+  --course-bg: #16201f;
+  --course-border: #01B4AE;
+  --course-text: #ffffff;
+  --course-accent: #01B4AE;
+}
+.course-color-2 {
+  --course-bg: #21191c;
+  --course-border: #EB4374;
+  --course-text: #ffffff;
+  --course-accent: #EB4374;
+}
+.course-color-3 {
+  --course-bg: #1e1f1b;
+  --course-border: #c6c45b;
+  --course-text: #ffffff;
+  --course-accent: #c6c45b;
+}
+.course-color-4 {
+  --course-bg: #182120;
+  --course-border: #60bbb8;
+  --course-text: #ffffff;
+  --course-accent: #60bbb8;
+}
+.course-color-5 {
+  --course-bg: #211a1d;
+  --course-border: #c97994;
+  --course-text: #ffffff;
+  --course-accent: #c97994;
+}
+
+/* ==========================================================================
+   Weekly Timetable Calendar
+   ========================================================================== */
+.calendar-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: #0d0e13;
+  margin-top: 6px;
+}
+.weekly-calendar {
+  min-width: 480px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+.calendar-header, .calendar-body {
+  display: grid;
+  grid-template-columns: 40px repeat(5, minmax(88px, 1fr));
+}
+.calendar-header {
+  background: var(--bg-surface-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+}
+.calendar-header > span, .calendar-day-heading-wrap {
+  padding: 6px 2px;
+  border-inline-start: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+.calendar-header > span:first-child {
+  border-inline-start: 0;
+  color: var(--text-muted);
+}
+.calendar-body {
+  height: var(--calendar-height);
+  position: relative;
+}
+.time-axis {
+  position: relative;
+  border-inline-end: 1px solid var(--border-subtle);
+  background: #090a0e;
+}
+.time-tick {
+  position: absolute;
+  inset-inline: 0;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transform: translateY(-50%);
+  user-select: none;
+}
+.calendar-day {
+  position: relative;
+  min-width: 0;
+  border-inline-start: 1px solid var(--border-subtle);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--border-subtle) 0px,
+    var(--border-subtle) 1px,
+    transparent 1px,
+    transparent var(--hour-height)
+  );
+}
+
+.calendar-meeting {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 1px;
+  width: calc(100% - 2px);
+  min-width: 0;
+  margin: 0;
+  padding: 4px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-inline-start: 3px solid var(--course-border);
+  border-radius: 5px;
+  background: var(--course-bg);
+  color: var(--course-text);
+  text-align: start;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.25;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: filter 0.15s ease;
+}
+.meeting-course {
+  font-weight: 800;
+  color: #ffffff;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  flex: none;
+}
+.meeting-section, .meeting-instructor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: none;
+  color: #e3e8ef;
+}
+.meeting-instructor {
+  font-size: 9px;
+  color: #bac3d0;
+}
+.meeting-time {
+  margin-top: auto;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex: none;
+  text-align: center;
+  color: var(--course-border);
+}
+.calendar-meeting:hover {
+  filter: brightness(1.15);
+}
+
+.calendar-meeting.meeting-remote {
+  border-inline-start-style: dashed;
+  border-inline-start-width: 4px;
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.04) 10px, rgba(255,255,255,0.04) 20px);
+}
+.remote-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.calendar-break {
+  position: absolute;
+  inset-inline: 4px;
+  width: calc(100% - 8px);
+  border: 1px dashed #353c4e;
+  background: rgba(241, 238, 13, 0.04);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 1;
+}
+.break-label {
+  background: #141720;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #303747;
+  color: #fef08a;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.calendar-day-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.day-break-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.day-break-badge.has-break {
+  background: var(--aidea-yellow-subtle);
+  color: #fef08a;
+  border: 1px solid var(--aidea-yellow-border);
+}
+.day-break-badge.solid {
+  background: var(--semantic-green-bg);
+  color: var(--semantic-green-text);
+  border: 1px solid var(--semantic-green-border);
+}
+.day-break-badge.off {
+  background: #181b24;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.calendar-help {
+  margin: 8px 0;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.schedule-details {
+  margin-top: 9px;
+}
+.schedule-section-detail {
+  padding: 10px;
+  margin-top: 7px;
+  background: var(--course-bg);
+  border-inline-start: 3px solid var(--course-border);
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #ffffff;
+}
+.schedule-section-detail h4 {
+  margin: 0 0 3px;
+  font-size: 12px;
+  color: #ffffff;
+}
+.detail-meetings {
+  margin-top: 3px;
+  color: #cbd5e1;
+}
+
+button:focus-visible, summary:focus-visible, .calendar-scroll:focus-visible, .schedule-section-detail:focus-visible {
+  outline: 2px solid var(--aidea-yellow);
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
+   Break Filter Controls
+   ========================================================================== */
+.break-controls {
+  margin-bottom: 16px;
+  background: #14161f;
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+}
+.break-controls h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #ffffff;
+}
+#breakMode {
+  margin-top: 4px;
+}
+#breakMode:focus {
+  border-color: var(--aidea-teal);
+  outline: 2px solid rgba(1, 180, 174, 0.35);
+}
+#breakFilters {
+  max-height: 320px;
+  overflow-y: auto;
+}
+#breakFilters fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+}
+.break-filter-chip {
+  width: auto !important;
+  margin: 0 !important;
+  padding: 5px 11px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  border-radius: 999px !important;
+  background: #191d28 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid var(--border-default) !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: all 0.15s ease !important;
+}
+.break-filter-chip:hover {
+  border-color: var(--aidea-teal) !important;
+  color: #ffffff !important;
+  background: #202634 !important;
+}
+.break-filter-chip.active {
+  background: var(--aidea-yellow) !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  border-color: var(--aidea-yellow) !important;
+  box-shadow: 0 0 10px rgba(241, 238, 13, 0.35) !important;
+}
+#breakSummary {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+#breakSummary b, #breakSummary strong {
+  color: var(--aidea-yellow);
+}
+
+/* ==========================================================================
+   Responsive Constraints (Mobile & Narrow Popups 380px)
+   ========================================================================== */
+@media (max-width: 440px) {
+  html.standalone-tab, body.standalone-tab {
+    width: 100vw;
+    min-width: 320px;
+    max-width: 100vw;
+  }
+  main {
+    padding: 10px;
+  }
+  .two {
+    grid-template-columns: 1fr;
+  }
+  .workflow-actions {
+    flex-direction: column;
+  }
+  .workflow-actions button {
+    width: 100% !important;
+  }
+  .schedule-action-bar {
+    flex-direction: column;
+  }
+  .schedule-action-bar button {
+    width: 100%;
+  }
+  .weekly-calendar {
+    min-width: 420px;
+  }
+}
+
+/* ========================================================================== 
+   Approved V1.4 UI/UX refinement
+   ========================================================================== */
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+.app-header {
+  padding: 4px 2px 12px;
+  margin-bottom: 12px;
+}
+.app-header::after {
+  width: 72px;
+  height: 2px;
+  background: linear-gradient(to left, var(--aidea-yellow) 0 40%, var(--aidea-pink) 40% 70%, var(--aidea-teal) 70% 100%);
+}
+.header-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+}
+.header-utility {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding-inline-start: 16px;
+  border-inline-start: 1px solid #262b34;
+}
+body.standalone-tab .header-utility {
+  display: none;
+}
+h1 {
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+.subtitle-primary {
+  margin-top: 5px;
+  color: #eeec54;
+  font-size: 12.5px;
+}
+.subtitle-secondary {
+  margin-top: 1px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.panel {
+  margin-bottom: 14px;
+  padding: 14px;
+  border-color: #252a35;
+  border-radius: 14px;
+  background: #101218;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.search-panel {
+  border-top-color: rgba(241, 238, 13, 0.62);
+  background:
+    radial-gradient(circle at 100% 0, rgba(241, 238, 13, 0.055), transparent 38%),
+    #111319;
+}
+.preferences-panel {
+  background: #0d0f14;
+  box-shadow: none;
+}
+.preferences-panel h2::before {
+  background: var(--aidea-pink);
+}
+.results-panel {
+  padding: 14px;
+  border-color: #303541;
+  background: #12141b;
+}
+
+h2 {
+  margin-bottom: 14px;
+  font-size: 15.5px;
+}
+label {
+  color: #d7dce5;
+  font-size: 12.5px;
+}
+input, select, textarea {
+  border-color: #343a48;
+  border-radius: 9px;
+  background: #0a0c10;
+}
+input:hover, select:hover, textarea:hover {
+  border-color: #4a5264;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #d8d617;
+  outline: 3px solid rgba(241, 238, 13, 0.13);
+}
+textarea {
+  min-height: 132px;
+}
+.hint {
+  color: #858fa0;
+  font-size: 11.5px;
+}
+
+.btn-open-tab {
+  align-self: center;
+  padding: 7px 12px;
+  border-color: rgba(1, 180, 174, 0.42);
+  border-radius: 8px;
+  background: rgba(1, 180, 174, 0.08);
+  color: #65d5d1;
+}
+.btn-open-tab:hover {
+  border-color: var(--aidea-teal);
+  background: rgba(1, 180, 174, 0.17);
+  box-shadow: none;
+}
+#run, button.btn-primary {
+  min-height: 44px;
+  border-radius: 9px;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.24) !important;
+}
+#run:hover, button.btn-primary:hover {
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28) !important;
+}
+
+.collapsible-header {
+  min-height: 28px;
+}
+.collapsible-header:hover h2 {
+  color: #ffffff;
+}
+.collapse-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  background: #171a21;
+}
+
+.panel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+.export-btn,
+.btn-export-secondary,
+.btn-export-all,
+.print-card-btn,
+.details-toggle,
+.copy-btn {
+  width: auto !important;
+  min-height: 32px;
+  margin: 0 !important;
+  padding: 6px 11px !important;
+  border: 1px solid #3a404d !important;
+  border-radius: 8px !important;
+  background: #191c23 !important;
+  color: #d9dee7 !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.35;
+  cursor: pointer;
+  transform: none !important;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+}
+.export-btn:hover,
+.btn-export-secondary:hover,
+.btn-export-all:hover,
+.print-card-btn:hover,
+.details-toggle:hover,
+.copy-btn:hover {
+  border-color: #596273 !important;
+  background: #232731 !important;
+  color: #ffffff !important;
+}
+.export-full-btn {
+  border-color: rgba(1, 180, 174, 0.38) !important;
+  color: #78d9d5 !important;
+}
+
+.course-card {
+  margin: 9px 0;
+  border-color: #282e38;
+  border-inline-start-width: 3px;
+  border-radius: 10px;
+  background: #0f1116;
+}
+.course-title {
+  min-height: 54px;
+  padding: 10px 12px;
+  background: #151820;
+}
+.course-header-info {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+.course-header-name {
+  width: 100%;
+  margin-bottom: 2px;
+  font-size: 13.5px;
+}
+.course-title .badge {
+  margin: 0;
+  padding: 2px 7px;
+  font-size: 10.5px;
+}
+.section {
+  padding: 10px 13px;
+  color: #c6ccd6;
+}
+.raw {
+  color: #737d8e;
+}
+.btn-remove-course {
+  align-self: center;
+  border-radius: 7px !important;
+  background: transparent !important;
+}
+
+.workflow-panel {
+  padding: 14px 16px;
+  border-color: rgba(1, 180, 174, 0.24);
+  border-inline-start: 3px solid rgba(1, 180, 174, 0.7);
+  background: #0f1418;
+}
+.workflow-header {
+  margin-bottom: 10px;
+}
+.btn-workflow-action {
+  min-height: 34px;
+  border-radius: 8px !important;
+}
+#showAddCourse:hover, #showAddCourse:focus-visible,
+#changeCollege:hover, #changeCollege:focus-visible {
+  box-shadow: none !important;
+}
+
+#conflictsPanel {
+  border: 1px solid #2d3038;
+  border-inline-start: 3px solid var(--semantic-red);
+  background: #121217;
+}
+#conflictsPanel h2 {
+  color: #f4f4f5;
+}
+.conflict-total {
+  margin: 8px 0 5px;
+  color: #f3b0b0;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.conflict-group {
+  border-color: #382b2f;
+  border-radius: 9px;
+  background: #141316;
+}
+.conflict-group summary {
+  min-height: 40px;
+  padding: 9px 11px;
+  background: #181519;
+  color: #e3d8db;
+}
+.conflict-pair {
+  padding: 11px 12px;
+  border-top: 1px solid #30272b;
+  color: #d6d9df;
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+.conflict-intervals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.conflict-intervals span {
+  padding: 3px 7px;
+  border: 1px solid rgba(239, 68, 68, 0.26);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #f0a5a5;
+}
+.small {
+  color: #8790a0;
+  font-size: 11px;
+}
+.notice.warn {
+  color: var(--semantic-orange-text);
+}
+
+.break-controls {
+  margin-bottom: 18px;
+  padding: 14px;
+  border-color: rgba(235, 67, 116, 0.22);
+  border-inline-start: 3px solid rgba(235, 67, 116, 0.72);
+  border-radius: 11px;
+  background: #141218;
+}
+.break-controls > label {
+  max-width: 420px;
+  margin-top: 12px;
+}
+#breakFilters {
+  max-height: 360px;
+  padding-inline-end: 2px;
+}
+#breakFilters fieldset {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+  padding: 11px;
+  border-color: #30343e;
+  background: #101217;
+}
+.break-filter-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  margin: 0;
+  padding: 7px 9px;
+  border: 1px solid #303642;
+  border-radius: 8px;
+  background: #171a21;
+  color: #d6dbe4;
+  cursor: pointer;
+}
+.break-filter-option:hover {
+  border-color: rgba(1, 180, 174, 0.58);
+  background: #1b2027;
+}
+.break-filter-option:has(input:checked) {
+  border-color: var(--aidea-yellow);
+  background: rgba(241, 238, 13, 0.09);
+}
+.break-filter-option input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--aidea-yellow);
+}
+.break-filter-time {
+  color: #f5f6f8;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-align: start;
+}
+.break-filter-count {
+  color: #8f98a8;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+#breakSummary {
+  margin: 9px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid #292d36;
+}
+
+.schedule-card {
+  margin-bottom: 16px;
+  border-color: #303541;
+  border-radius: 12px;
+  background: #0d0f14;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+.schedule-title {
+  padding: 12px 10px;
+  background: #171a21;
+}
+.schedule-title-top {
+  margin-bottom: 8px;
+}
+.schedule-title h3 {
+  color: #f1ef42;
+  font-size: 16px;
+}
+.metrics {
+  gap: 5px;
+  margin: 5px 0;
+}
+.metrics .badge {
+  padding: 3px 7px;
+  background: #1d2028;
+  color: #c5cbd5;
+  font-size: 10.5px;
+}
+.daily-breaks-summary {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid #282c35;
+}
+.schedule-body {
+  padding: 9px 10px;
+}
+
+.calendar-scroll {
+  margin-top: 2px;
+  border-color: #303540;
+  border-radius: 10px;
+  background: #0a0c10;
+  scrollbar-gutter: stable;
+  overscroll-behavior-inline: contain;
+}
+.calendar-scroll:focus-visible {
+  outline-offset: 2px;
+}
+.calendar-header {
+  background: #171a21;
+  font-size: 11px;
+}
+.calendar-header > span,
+.calendar-day-heading-wrap {
+  padding: 10px 0;
+  min-width: 0;
+}
+.calendar-body {
+  background: #0b0d11;
+}
+.time-axis {
+  background: #090a0d;
+}
+.calendar-meeting {
+  min-width: 0;
+  padding: 3px 4px;
+  border-color: rgba(255, 255, 255, 0.14);
+  border-inline-start-width: 3px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+}
+.meeting-course {
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.calendar-meeting:hover {
+  filter: brightness(1.1);
+}
+.calendar-break {
+  background: rgba(241, 238, 13, 0.025);
+}
+.calendar-help {
+  margin: 8px 2px 10px;
+}
+.schedule-action-bar {
+  justify-content: flex-start;
+}
+.schedule-action-bar button {
+  width: auto;
+  min-width: 170px;
+}
+
+@media (max-width: 440px) {
+  main {
+    padding: 10px;
+  }
+  .panel, .results-panel {
+    padding: 12px;
+  }
+  .header-top {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .header-utility {
+    padding: 0;
+    border: 0;
+  }
+  #breakFilters fieldset {
+    grid-template-columns: 1fr;
+  }
+  .schedule-action-bar button {
+    width: 100%;
+    min-width: 0;
+  }
+  .weekly-calendar { min-width: 480px; }
+}

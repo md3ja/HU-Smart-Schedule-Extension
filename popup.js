@@ -2,8 +2,8 @@
 "use strict";
 
 const BASE = "https://hu.edu.jo/unitCenter/";
-const URL_BY_NUMBER = BASE + "CourseNumber_a.aspx";
-const URL_BY_NAME = BASE + "Course_Name_a.aspx";
+const URL_BY_NUMBER = BASE + "CourseNumber_a.aspx?t=0";
+const URL_BY_NAME = BASE + "Corse_Name_a.aspx?t=0";
 // HU's own "حسب اسم المادة" navigation currently redirects to this spelling.
 const URL_BY_NAME_LEGACY = BASE + "Corse_Name_a.aspx";
 const documentUrls = new WeakMap();
@@ -121,7 +121,8 @@ async function fetchDoc(url, options = {}) {
   }
 
   const text = await response.text();
-  const doc = new DOMParser().parseFromString(text, "text/html");
+  const cleanText = text.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<link[^>]*>/gi, '');
+  const doc = new DOMParser().parseFromString(cleanText, "text/html");
   documentUrls.set(doc, response.url || url);
   return doc;
 }
@@ -1227,7 +1228,15 @@ function setCandidateSchedules(results) {
       const label = document.createElement('label'), input = document.createElement('input');
       input.type = 'checkbox'; input.value = option.key;
       input.addEventListener('change', applyBreakFilters);
-      label.append(input, ` ${minutesToTime(option.start)}–${minutesToTime(option.end)} — ${option.count} جداول`);
+      label.className = 'break-filter-option';
+      const time = document.createElement('bdi');
+      time.dir = 'ltr';
+      time.className = 'break-filter-time';
+      time.textContent = `${minutesToTime(option.start)}–${minutesToTime(option.end)}`;
+      const count = document.createElement('span');
+      count.className = 'break-filter-count';
+      count.textContent = `${option.count} جداول`;
+      label.append(input, time, count);
       fieldset.append(label);
     }
     container.append(fieldset);
@@ -1380,6 +1389,7 @@ function renderSectionConflicts(allSections) {
     `).join('')}
   `;
   $('conflictsPanel').classList.remove('hidden');
+  setPanelCollapsed('conflictsPanel', report.total === 0);
   $('exportConflictsBtn')?.addEventListener('click', () => openExport('conflicts'));
 }
 
@@ -1395,43 +1405,69 @@ function renderSections(allSections) {
   for (const [courseKey, sections] of allSections.entries()) {
     const title = sections[0]?.courseLabel || courseKey;
 
-    const card = document.createElement("details");
-    card.className = "course-card";
+    const card = document.createElement("div");
+    card.className = "course-card is-collapsed";
 
     const parsedCount = sections.filter(hasCompleteTiming).length;
 
-    card.innerHTML = `
-      <summary class="course-title">
-        <div class="course-header-info">
-          <span class="course-header-name">${escapeHtml(title)}</span>
-          <span class="badge availability-offered">متاح هذا الفصل</span>
-          <span class="badge">${sections.length} شعب/خيارات</span>
-          <span class="badge">${parsedCount} وقت مقروء</span>
-          ${sections.some(sec => sectionTimingLabel(sec) === 'موعد غير منشور') ? '<span class="badge warn">موعد غير منشور</span>' : ''}
-        </div>
-      </summary>
-      ${sections.map(sec => `
-        <div class="section">
-          <div>
-            <b>الشعبة:</b> ${escapeHtml(sec.section)}
-            ${sec.courseNumber ? `<span class="badge">${escapeHtml(sec.courseNumber)}</span>` : ""}
-          </div>
-          <div><b>المدرس:</b> ${escapeHtml((sec.instructors || []).join('، ') || 'غير معلن')}</div>
-          <div class="meet ${hasCompleteTiming(sec) ? "good" : "warn"}">
-            ${escapeHtml(sec.meetings.length ? meetingText(sec.meetings) : sectionTimingLabel(sec))}
-          </div>
-          ${hasCompleteTiming(sec) ? '' : `<div class="notice warn">مستبعدة من الجدولة: ${escapeHtml(sectionTimingLabel(sec))}${sec.warnings?.length ? ' — ' + escapeHtml(sec.warnings.join('؛ ')) : ''}</div>`}
-          <div class="raw">${escapeHtml(sec.raw)}</div>
-        </div>
-      `).join("")}
-    `;
+    const header = document.createElement("div");
+    header.className = "course-card-header";
 
-    const active=workflowSession?.entries.find(e=>!e.excluded&&e.id===courseKey);
-    if(active) {
-      const remove=document.createElement('button');remove.type='button';remove.textContent='إزالة';remove.className='btn-remove-course';remove.dataset.removeCourse=active.id;
-      remove.title='إزالة المادة من الجدول الحالي';
-      remove.disabled=workflowBusy;remove.onclick=event=>{event.preventDefault();event.stopPropagation();removeWorkflowCourse(active.id);};card.querySelector('summary').append(remove);
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "course-title";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = `
+      <div class="course-header-info">
+        <span class="course-header-name">${escapeHtml(title)}</span>
+        <span class="badge availability-offered">متاح هذا الفصل</span>
+        <span class="badge">${sections.length} شعب/خيارات</span>
+        <span class="badge">${parsedCount} وقت مقروء</span>
+        ${sections.some(sec => sectionTimingLabel(sec) === 'موعد غير منشور') ? '<span class="badge warn">موعد غير منشور</span>' : ''}
+      </div>
+    `;
+    toggle.addEventListener("click", () => {
+      const isCollapsed = card.classList.toggle("is-collapsed");
+      toggle.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
+    });
+    header.appendChild(toggle);
+
+    const active = workflowSession?.entries.find(e => !e.excluded && e.id === courseKey);
+    if (active) {
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'إزالة';
+      remove.className = 'btn-remove-course';
+      remove.dataset.removeCourse = active.id;
+      remove.title = 'إزالة المادة من الجدول الحالي';
+      remove.disabled = workflowBusy;
+      remove.onclick = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        removeWorkflowCourse(active.id);
+      };
+      header.appendChild(remove);
     }
+    card.appendChild(header);
+
+    const sectionsList = document.createElement("div");
+    sectionsList.className = "course-sections-list";
+    sectionsList.innerHTML = sections.map(sec => `
+      <div class="section">
+        <div>
+          <b>الشعبة:</b> ${escapeHtml(sec.section)}
+          ${sec.courseNumber ? `<span class="badge">${escapeHtml(sec.courseNumber)}</span>` : ""}
+        </div>
+        <div><b>المدرس:</b> ${escapeHtml((sec.instructors || []).join('، ') || 'غير معلن')}</div>
+        <div class="meet ${hasCompleteTiming(sec) ? "good" : "warn"}">
+          ${escapeHtml(sec.meetings.length ? meetingText(sec.meetings) : sectionTimingLabel(sec))}
+        </div>
+        ${hasCompleteTiming(sec) ? '' : `<div class="notice warn">مستبعدة من الجدولة: ${escapeHtml(sectionTimingLabel(sec))}${sec.warnings?.length ? ' — ' + escapeHtml(sec.warnings.join('؛ ')) : ''}</div>`}
+        <div class="raw">${escapeHtml(sec.raw)}</div>
+      </div>
+    `).join("");
+    card.appendChild(sectionsList);
+
     container.appendChild(card);
   }
 
@@ -1648,30 +1684,126 @@ function getPrefs() {
   return prefs;
 }
 
+const LEGACY_DEFAULT_COURSES = [
+  "استرجاع المعلومات",
+  "1910011423 | الحوسبة المتوازية والموزعة",
+  "الروبوتات المتنقلة الذكية",
+  "مشروع في علم البيانات والذكاء الاصطناعي (1)",
+  "مختبر مقدمة في البرمجة",
+  "القيادة والمسؤولية المجتمعية"
+].join("\n");
+
+function isLegacyDefaultCourses(val) {
+  if (typeof val !== 'string') return false;
+  const norm = s => s.split(/\r?\n/).map(x => x.trim()).filter(Boolean).join('\n');
+  return norm(val) === norm(LEGACY_DEFAULT_COURSES);
+}
+
+let draftTimer = null;
+function persistCourseDraft() {
+  if (typeof clearTimeout === 'function') {
+    clearTimeout(draftTimer);
+  }
+  const coursesEl = $("courses");
+  const val = coursesEl ? coursesEl.value : "";
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.set({ courseInputDraft: val });
+  }
+}
+
+function handleCourseInput() {
+  if (typeof clearTimeout === 'function') {
+    clearTimeout(draftTimer);
+  }
+  if (typeof setTimeout === 'function') {
+    draftTimer = setTimeout(persistCourseDraft, 150);
+  } else {
+    persistCourseDraft();
+  }
+}
+
+function setPanelCollapsed(panelId, isCollapsed) {
+  const panel = $(panelId);
+  if (!panel) return;
+  const toggleBtn = panel.querySelector('.collapsible-header');
+  if (isCollapsed) {
+    panel.classList.add('is-collapsed');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      const icon = toggleBtn.querySelector('.collapse-icon');
+      if (icon) icon.textContent = '◂';
+    }
+  } else {
+    panel.classList.remove('is-collapsed');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      const icon = toggleBtn.querySelector('.collapse-icon');
+      if (icon) icon.textContent = '▾';
+    }
+  }
+}
+
+function togglePanelCollapse(panelId) {
+  const panel = $(panelId);
+  if (!panel) return;
+  const isCurrentlyCollapsed = panel.classList.contains('is-collapsed');
+  setPanelCollapsed(panelId, !isCurrentlyCollapsed);
+}
+
+function initCollapsiblePanels() {
+  const sectionsToggle = $('sectionsToggle');
+  if (sectionsToggle) {
+    sectionsToggle.addEventListener('click', () => togglePanelCollapse('sectionsPanel'));
+  }
+  const conflictsToggle = $('conflictsToggle');
+  if (conflictsToggle) {
+    conflictsToggle.addEventListener('click', () => togglePanelCollapse('conflictsPanel'));
+  }
+}
+
 async function saveSettings() {
+  const coursesVal = $("courses") ? $("courses").value : "";
   const data = {
     year: $("year").value,
     semester: $("semester").value,
-    courses: $("courses").value,
+    courses: coursesVal,
     notBefore: $("notBefore").value,
     notAfter: $("notAfter").value,
     ranking: $("ranking").value,
     offDays: [...document.querySelectorAll(".offday:checked")].map(x => x.value)
   };
-  await chrome.storage.local.set({huSmartSchedule: data});
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    await chrome.storage.local.set({huSmartSchedule: data, courseInputDraft: coursesVal});
+  }
 }
 
 async function loadSettings() {
-  const obj = await chrome.storage.local.get("huSmartSchedule");
-  const data = obj.huSmartSchedule;
+  const obj = (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local)
+    ? await chrome.storage.local.get(["huSmartSchedule", "courseInputDraft"])
+    : {};
+  const data = obj?.huSmartSchedule;
+  let draft = obj?.courseInputDraft;
+
+  if (typeof draft === 'string') {
+    if (isLegacyDefaultCourses(draft)) {
+      draft = '';
+    }
+  } else if (data?.courses) {
+    draft = isLegacyDefaultCourses(data.courses) ? '' : data.courses;
+  }
+
+  if (typeof draft === 'string') {
+    const coursesEl = $("courses");
+    if (coursesEl) coursesEl.value = draft;
+  }
+
   if (!data) return;
 
-  if (data.year) $("year").value = data.year;
-  if (data.semester) $("semester").value = data.semester;
-  if (data.courses) $("courses").value = data.courses;
-  if (typeof data.notBefore === 'string') $("notBefore").value = data.notBefore;
-  if (typeof data.notAfter === 'string') $("notAfter").value = data.notAfter;
-  if (data.ranking) $("ranking").value = data.ranking;
+  if (data.year && $("year")) $("year").value = data.year;
+  if (data.semester && $("semester")) $("semester").value = data.semester;
+  if (typeof data.notBefore === 'string' && $("notBefore")) $("notBefore").value = data.notBefore;
+  if (typeof data.notAfter === 'string' && $("notAfter")) $("notAfter").value = data.notAfter;
+  if (data.ranking && $("ranking")) $("ranking").value = data.ranking;
 
   const off = new Set(data.offDays || []);
   for (const box of document.querySelectorAll(".offday")) {
@@ -1773,6 +1905,7 @@ function refreshWorkflow() {
   try {workflowSession.prefs=getPrefs();}catch(error){setStatus('وقت البداية يجب أن يسبق وقت النهاية.','error');return;}
   const active=workflowSession.entries.filter(e=>!e.excluded);
   $('courses').value=active.map(e=>e.result.original).join('\n');
+  persistCourseDraft();
   $('workflowPanel').classList.remove('hidden');
   $('workflowScope').textContent=`السنة ${currentResultTerm.year} — ${currentResultTerm.semester}. الإضافة تستخدم نفس الفصل والبيانات المحفوظة لهذه الجلسة.`;
   const missing=active.filter(e=>!e.sections.length),allSections=new Map(active.filter(e=>e.sections.length).map(e=>[e.id,e.sections]));
@@ -1887,3 +2020,12 @@ $("run").addEventListener("click", run);
 $('showAddCourse').onclick=()=>{$('addCourseForm').classList.remove('hidden');$('addCourseInput').focus();};
 $('addCourseConfirm').onclick=addWorkflowCourse;
 $('changeCollege').onclick=()=>{broadFacultyChoice=undefined;setStatus('تم إلغاء تثبيت الكلية؛ سيُطلب تحديد الكلية عند البحث التالي عن المواد المشتركة (تدريب، مشروع، مختبر).');};
+
+initCollapsiblePanels();
+
+const coursesInputEl = $("courses");
+if (coursesInputEl) {
+  coursesInputEl.addEventListener("input", handleCourseInput);
+  coursesInputEl.addEventListener("change", persistCourseDraft);
+  coursesInputEl.addEventListener("blur", persistCourseDraft);
+}
