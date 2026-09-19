@@ -16,7 +16,7 @@ A fast course schedule planner with automatic conflict detection, flexible prefe
 
 ---
 
-# 🇬🇧 English
+#  English
 
 ## 🎬 Overview
 
@@ -217,7 +217,7 @@ This project is proprietary and is **not open source**. Unauthorized copying, re
 
 ---
 
-# 🇯🇴 العربية
+#  العربية
 
 ## 🎬 نظرة عامة
 
