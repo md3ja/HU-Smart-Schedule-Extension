@@ -1,8 +1,8 @@
 # Privacy Policy — HU Smart Schedule
 
-**Effective Date**: September 2026  
+**Effective Date**: October 2026  
 **Extension**: HU Smart Schedule (Chrome Extension)  
-**Target Version**: 1.2.0  
+**Target Version**: 1.5.0  
 **Repository**: [https://github.com/md3ja/HU-Smart-Schedule-Extension](https://github.com/md3ja/HU-Smart-Schedule-Extension)  
 **Project Status**: Independent project (Publicly auditable source repository; Copyright © 2026. All rights reserved.)
 
@@ -35,6 +35,8 @@ Core schedule processing runs locally inside the extension:
 - **Smart Search**: Name normalization and matching against the bundled 3,203-course catalog run locally. Ambiguous matches require a user selection; catalog entries and historical hints do not establish live availability.
 - **Conflict Detection**: Checking for overlapping lecture times occurs locally in browser memory.
 - **Schedule Generation & Ranking**: Calculating compatible timetable combinations and ranking them based on student preferences is executed locally.
+- **Interactive Manual Builder**: Evaluating section compatibility, disabling conflicting options in real time, and calculating deadlock resolution guidance occur entirely in browser memory.
+- **Classroom & Modality Parsing**: Extracting campus building codes, hall names, and blended attendance modalities from public university tables runs locally.
 - **Break Calculation & Filtering**: Measuring gap minutes between consecutive in-person lectures and evaluating interactive Sunday–Thursday / Monday–Wednesday Break filters (AND/OR modes) are performed locally in browser memory.
 - **Independent Identity Resolution**: Normalizing queries and mapping course identities to prevent duplicate collisions is executed locally.
 - **Calendar & Export Rendering**: Visual weekly timetable rendering and A4 printable report generation run locally.
@@ -44,7 +46,7 @@ Core schedule processing runs locally inside the extension:
 ## 4. Local Data Storage (`chrome.storage.local`)
 
 The extension utilizes Chrome's local storage API (`chrome.storage.local`) on your device for two functional purposes:
-1. **User Preferences (`huSmartSchedule`)**: Stores your chosen academic year, semester, search terms, and schedule filter settings so you do not have to re-enter them every time the extension is opened.
+1. **User Preferences (`huSmartSchedule`)**: Stores your chosen academic year, semester, course search terms, active course drafts, manual builder selections, and schedule filter preferences locally on your device.
 2. **Export Transfer Data (`huSmartScheduleExport`)**: Temporarily stores the selected schedule proposal to populate the print/export report tab.
 
 This data remains stored locally on your device, is never synchronized to external cloud servers, and is removed if you clear extension data or uninstall the extension.

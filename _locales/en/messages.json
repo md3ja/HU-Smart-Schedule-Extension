@@ -1,6 +1,6 @@
 {
   "appDesc": {
-    "message": "Plan Hashemite University schedules with course search, conflict detection, Break calculation, and PDF export.",
+    "message": "Plan Hashemite University schedules: search sections, detect conflicts, generate compatible timetables, and export to PDF.",
     "description": "Chrome extension and Chrome Web Store summary"
   }
 }

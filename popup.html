@@ -46,27 +46,379 @@
 
     <section class="panel preferences-panel">
       <h2>تفضيلات الجدول</h2>
-      <div class="two">
-        <label>
-          لا يبدأ قبل
-          <input id="notBefore" type="time" value="08:00">
-        </label>
-        <label>
-          لا ينتهي بعد
-          <input id="notAfter" type="time" value="18:00">
-        </label>
+      <div class="time-preferences-grid">
+        <div class="time-pref-field">
+          <label class="time-pref-label" for="notBeforeDisplay">لا يبدأ قبل</label>
+          <div class="time-picker-control">
+            <button
+              type="button"
+              id="notBeforeDisplay"
+              class="time-display-btn"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-controls="notBeforePopover"
+              aria-label="لا يبدأ قبل: 8:00 صباحاً">
+              <span class="time-display-text">
+                <span class="time-display-val" dir="ltr">8:00</span>
+                <span class="time-display-period">صباحاً</span>
+              </span>
+              <svg class="time-display-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div
+              id="notBeforePopover"
+              class="time-popover hidden"
+              role="dialog"
+              aria-modal="false"
+              aria-label="تحديد وقت بداية الجدول">
+              <div class="time-popover-cluster" dir="ltr">
+                <div class="time-hour-combobox" id="notBeforeHourCombobox">
+                  <input
+                    type="text"
+                    id="notBeforeHourInput"
+                    class="time-popover-input time-input-hour"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="2"
+                    aria-label="ساعة بداية الجدول"
+                    autocomplete="off"
+                    value="8"
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-autocomplete="none"
+                    aria-controls="notBeforeHourMenu"
+                    aria-haspopup="grid">
+                  <button
+                    type="button"
+                    id="notBeforeHourToggle"
+                    class="hour-dropdown-toggle minute-dropdown-toggle"
+                    tabindex="-1"
+                    aria-label="عرض خيارات الساعات"
+                    aria-expanded="false"
+                    aria-controls="notBeforeHourMenu">
+                    <svg class="hour-chevron minute-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <span class="time-hour-val hidden" id="notBeforeHourVal" style="display:none;" aria-hidden="true">8</span>
+                  <div
+                    id="notBeforeHourMenu"
+                    class="time-dropdown-menu hour-dropdown-menu hour-grid-menu hidden"
+                    role="grid"
+                    aria-label="خيارات الساعات">
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="1" aria-selected="false" tabindex="-1">1</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="2" aria-selected="false" tabindex="-1">2</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="3" aria-selected="false" tabindex="-1">3</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="4" aria-selected="false" tabindex="-1">4</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="5" aria-selected="false" tabindex="-1">5</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="6" aria-selected="false" tabindex="-1">6</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="7" aria-selected="false" tabindex="-1">7</div>
+                    <div class="hour-dropdown-item hour-grid-item is-selected" role="gridcell" data-value="8" aria-selected="true" tabindex="-1">8</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="9" aria-selected="false" tabindex="-1">9</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="10" aria-selected="false" tabindex="-1">10</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="11" aria-selected="false" tabindex="-1">11</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="12" aria-selected="false" tabindex="-1">12</div>
+                  </div>
+                  <select
+                    id="notBeforeHour"
+                    class="time-popover-select time-select-hour"
+                    aria-hidden="true"
+                    tabindex="-1"
+                    style="display: none;">
+                  </select>
+                </div>
+                <span class="time-separator" aria-hidden="true">:</span>
+                <div class="time-minute-combobox" id="notBeforeMinuteCombobox">
+                  <input
+                    type="text"
+                    id="notBeforeMinute"
+                    class="time-popover-input time-input-minute time-select-minute"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="2"
+                    aria-label="دقيقة بداية الجدول"
+                    autocomplete="off"
+                    value="00"
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-autocomplete="none"
+                    aria-controls="notBeforeMinuteMenu"
+                    aria-haspopup="listbox">
+                  <button
+                    type="button"
+                    id="notBeforeMinuteToggle"
+                    class="minute-dropdown-toggle"
+                    tabindex="-1"
+                    aria-label="عرض خيارات الدقائق المقترحة"
+                    aria-expanded="false"
+                    aria-controls="notBeforeMinuteMenu">
+                    <svg class="minute-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <div
+                    id="notBeforeMinuteMenu"
+                    class="time-dropdown-menu minute-dropdown-menu hidden"
+                    role="listbox"
+                    aria-label="خيارات الدقائق">
+                    <div class="minute-dropdown-item is-selected" role="option" data-value="00" aria-selected="true" tabindex="-1">00</div>
+                    <div class="minute-dropdown-item" role="option" data-value="15" aria-selected="false" tabindex="-1">15</div>
+                    <div class="minute-dropdown-item" role="option" data-value="30" aria-selected="false" tabindex="-1">30</div>
+                    <div class="minute-dropdown-item" role="option" data-value="45" aria-selected="false" tabindex="-1">45</div>
+                  </div>
+                </div>
+                <datalist id="notBeforeMinuteSuggestions">
+                  <option value="00"></option>
+                  <option value="15"></option>
+                  <option value="30"></option>
+                  <option value="45"></option>
+                </datalist>
+              </div>
+              <div class="time-period-toggle" role="group" aria-label="فترة بداية الجدول" id="notBeforePeriodToggle">
+                <button type="button" class="period-btn is-active" id="notBeforePeriodAM" data-period="AM" aria-pressed="true" aria-label="صباحاً">
+                  <svg class="period-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2v4" />
+                    <path d="M4.93 10.93l2.83-2.83" />
+                    <path d="M19.07 10.93l-2.83-2.83" />
+                    <path d="M2 18h2" />
+                    <path d="M20 18h2" />
+                    <path d="M16 18a4 4 0 0 0-8 0" />
+                    <path d="M3 22h18" />
+                  </svg>
+                  صباحاً
+                </button>
+                <button type="button" class="period-btn" id="notBeforePeriodPM" data-period="PM" aria-pressed="false" aria-label="مساءً">
+                  <svg class="period-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                  مساءً
+                </button>
+              </div>
+              <select
+                id="notBeforePeriod"
+                class="time-select-period hidden"
+                aria-hidden="true"
+                style="display:none;">
+              </select>
+              <input
+                id="notBefore"
+                type="hidden"
+                value="08:00"
+                aria-hidden="true">
+            </div>
+          </div>
+        </div>
+
+        <div class="time-pref-field">
+          <label class="time-pref-label" for="notAfterDisplay">لا ينتهي بعد</label>
+          <div class="time-picker-control">
+            <button
+              type="button"
+              id="notAfterDisplay"
+              class="time-display-btn"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-controls="notAfterPopover"
+              aria-label="لا ينتهي بعد: 10:00 مساءً">
+              <span class="time-display-text">
+                <span class="time-display-val" dir="ltr">10:00</span>
+                <span class="time-display-period">مساءً</span>
+              </span>
+              <svg class="time-display-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div
+              id="notAfterPopover"
+              class="time-popover hidden"
+              role="dialog"
+              aria-modal="false"
+              aria-label="تحديد وقت نهاية الجدول">
+              <div class="time-popover-cluster" dir="ltr">
+                <div class="time-hour-combobox" id="notAfterHourCombobox">
+                  <input
+                    type="text"
+                    id="notAfterHourInput"
+                    class="time-popover-input time-input-hour"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="2"
+                    aria-label="ساعة نهاية الجدول"
+                    autocomplete="off"
+                    value="10"
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-autocomplete="none"
+                    aria-controls="notAfterHourMenu"
+                    aria-haspopup="grid">
+                  <button
+                    type="button"
+                    id="notAfterHourToggle"
+                    class="hour-dropdown-toggle minute-dropdown-toggle"
+                    tabindex="-1"
+                    aria-label="عرض خيارات الساعات"
+                    aria-expanded="false"
+                    aria-controls="notAfterHourMenu">
+                    <svg class="hour-chevron minute-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <span class="time-hour-val hidden" id="notAfterHourVal" style="display:none;" aria-hidden="true">10</span>
+                  <div
+                    id="notAfterHourMenu"
+                    class="time-dropdown-menu hour-dropdown-menu hour-grid-menu hidden"
+                    role="grid"
+                    aria-label="خيارات الساعات">
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="1" aria-selected="false" tabindex="-1">1</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="2" aria-selected="false" tabindex="-1">2</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="3" aria-selected="false" tabindex="-1">3</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="4" aria-selected="false" tabindex="-1">4</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="5" aria-selected="false" tabindex="-1">5</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="6" aria-selected="false" tabindex="-1">6</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="7" aria-selected="false" tabindex="-1">7</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="8" aria-selected="false" tabindex="-1">8</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="9" aria-selected="false" tabindex="-1">9</div>
+                    <div class="hour-dropdown-item hour-grid-item is-selected" role="gridcell" data-value="10" aria-selected="true" tabindex="-1">10</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="11" aria-selected="false" tabindex="-1">11</div>
+                    <div class="hour-dropdown-item hour-grid-item" role="gridcell" data-value="12" aria-selected="false" tabindex="-1">12</div>
+                  </div>
+                  <select
+                    id="notAfterHour"
+                    class="time-popover-select time-select-hour"
+                    aria-hidden="true"
+                    tabindex="-1"
+                    style="display: none;">
+                  </select>
+                </div>
+                <span class="time-separator" aria-hidden="true">:</span>
+                <div class="time-minute-combobox" id="notAfterMinuteCombobox">
+                  <input
+                    type="text"
+                    id="notAfterMinute"
+                    class="time-popover-input time-input-minute time-select-minute"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="2"
+                    aria-label="دقيقة نهاية الجدول"
+                    autocomplete="off"
+                    value="00"
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-autocomplete="none"
+                    aria-controls="notAfterMinuteMenu"
+                    aria-haspopup="listbox">
+                  <button
+                    type="button"
+                    id="notAfterMinuteToggle"
+                    class="minute-dropdown-toggle"
+                    tabindex="-1"
+                    aria-label="عرض خيارات الدقائق المقترحة"
+                    aria-expanded="false"
+                    aria-controls="notAfterMinuteMenu">
+                    <svg class="minute-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <div
+                    id="notAfterMinuteMenu"
+                    class="time-dropdown-menu minute-dropdown-menu hidden"
+                    role="listbox"
+                    aria-label="خيارات الدقائق">
+                    <div class="minute-dropdown-item is-selected" role="option" data-value="00" aria-selected="true" tabindex="-1">00</div>
+                    <div class="minute-dropdown-item" role="option" data-value="15" aria-selected="false" tabindex="-1">15</div>
+                    <div class="minute-dropdown-item" role="option" data-value="30" aria-selected="false" tabindex="-1">30</div>
+                    <div class="minute-dropdown-item" role="option" data-value="45" aria-selected="false" tabindex="-1">45</div>
+                  </div>
+                </div>
+                <datalist id="notAfterMinuteSuggestions">
+                  <option value="00"></option>
+                  <option value="15"></option>
+                  <option value="30"></option>
+                  <option value="45"></option>
+                </datalist>
+              </div>
+              <div class="time-period-toggle" role="group" aria-label="فترة نهاية الجدول" id="notAfterPeriodToggle">
+                <button type="button" class="period-btn" id="notAfterPeriodAM" data-period="AM" aria-pressed="false" aria-label="صباحاً">
+                  <svg class="period-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2v4" />
+                    <path d="M4.93 10.93l2.83-2.83" />
+                    <path d="M19.07 10.93l-2.83-2.83" />
+                    <path d="M2 18h2" />
+                    <path d="M20 18h2" />
+                    <path d="M16 18a4 4 0 0 0-8 0" />
+                    <path d="M3 22h18" />
+                  </svg>
+                  صباحاً
+                </button>
+                <button type="button" class="period-btn is-active" id="notAfterPeriodPM" data-period="PM" aria-pressed="true" aria-label="مساءً">
+                  <svg class="period-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                  مساءً
+                </button>
+              </div>
+              <select
+                id="notAfterPeriod"
+                class="time-select-period hidden"
+                aria-hidden="true"
+                style="display:none;">
+              </select>
+              <input
+                id="notAfter"
+                type="hidden"
+                value="22:00"
+                aria-hidden="true">
+            </div>
+          </div>
+        </div>
       </div>
 
-      <label>
-        رتّب الاقتراحات حسب
-        <select id="ranking">
-          <option value="balanced">أيام أقل، ثم فراغات أقل، ثم بدء متأخر، ثم انتهاء مبكر</option>
-          <option value="days">أقل عدد أيام دوام</option>
-          <option value="gaps">أقل فراغات بين المحاضرات</option>
-          <option value="late">بدء متأخر قدر الإمكان</option>
-          <option value="earlyEnd">انتهاء مبكر قدر الإمكان</option>
+      <div id="notAfterMigrationNotice" class="not-after-migration-notice hidden" role="status" aria-live="polite">
+        <div class="migration-notice-text">
+          تم تحديث الوقت الافتراضي لآخر محاضرة إلى 10:00 مساءً لدعم المواد المسائية. إعدادك الحالي هو 6:00 مساءً.
+        </div>
+        <div class="migration-notice-actions">
+          <button type="button" id="btnAcceptNotAfterMigration" class="btn-migration-action btn-migration-accept">استخدام 10:00 مساءً</button>
+          <button type="button" id="btnKeepNotAfterMigration" class="btn-migration-action btn-migration-keep">الاحتفاظ بـ 6:00 مساءً</button>
+        </div>
+      </div>
+
+      <div class="ranking-row">
+        <div class="ranking-header">
+          <label class="ranking-label" for="ranking" id="rankingGroupLabel">ترتيب النتائج:</label>
+          <span class="ranking-hint">يرتب الجداول فقط ولا يستبعدها.</span>
+        </div>
+        <select id="ranking" class="ranking-select" aria-hidden="true" tabindex="-1" style="display: none;">
+          <option value="balanced" selected>متوازن</option>
+          <option value="days">أقل أيام دوام</option>
+          <option value="gaps">أقل فراغات</option>
+          <option value="late">بدء متأخر</option>
+          <option value="earlyEnd">انتهاء مبكر</option>
         </select>
-      </label>
+        <div class="ranking-chips" role="radiogroup" aria-labelledby="rankingGroupLabel">
+          <button type="button" class="ranking-chip is-active" role="radio" aria-checked="true" data-ranking="balanced" tabindex="0">
+            <svg class="ranking-chip-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/></svg>
+            <span class="ranking-chip-text">متوازن</span>
+          </button>
+          <button type="button" class="ranking-chip" role="radio" aria-checked="false" data-ranking="days" tabindex="-1">
+            <svg class="ranking-chip-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/></svg>
+            <span class="ranking-chip-text">أقل أيام دوام</span>
+          </button>
+          <button type="button" class="ranking-chip" role="radio" aria-checked="false" data-ranking="gaps" tabindex="-1">
+            <svg class="ranking-chip-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/></svg>
+            <span class="ranking-chip-text">أقل فراغات</span>
+          </button>
+          <button type="button" class="ranking-chip" role="radio" aria-checked="false" data-ranking="late" tabindex="-1">
+            <svg class="ranking-chip-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/></svg>
+            <span class="ranking-chip-text">بدء متأخر</span>
+          </button>
+          <button type="button" class="ranking-chip" role="radio" aria-checked="false" data-ranking="earlyEnd" tabindex="-1">
+            <svg class="ranking-chip-check" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/></svg>
+            <span class="ranking-chip-text">انتهاء مبكر</span>
+          </button>
+        </div>
+      </div>
 
       <fieldset>
         <legend>أيام ما بدي دوام فيها</legend>
@@ -82,6 +434,7 @@
       <button id="run">اجلب الشعب وابنِ الجداول</button>
       <p class="hint">أبقِ النافذة مفتوحة حتى انتهاء البحث؛ إغلاقها يوقف العملية.</p>
       <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="zeroScheduleDiagnostic" class="zero-schedule-diagnostic hidden" aria-live="polite"></div>
       <div id="smartSearchChoice" class="smart-search-choice hidden" role="group" aria-labelledby="smartSearchTitle">
         <h3 id="smartSearchTitle"></h3>
         <p id="smartSearchPrompt"></p>
@@ -117,7 +470,14 @@
       </div>
       <div class="workflow-actions">
         <button id="showAddCourse" type="button" class="btn-workflow-action">+ إضافة مادة</button>
-        <button id="changeCollege" type="button" class="btn-workflow-action">تغيير الكلية</button>
+      </div>
+      <div id="sharedCollegeRow" class="shared-college-row hidden">
+        <div class="shared-college-header">
+          <span class="shared-college-label">كلية المواد المشتركة: <strong id="currentCollegeName"></strong></span>
+          <button id="changeCollege" type="button" class="btn-change-college">تغيير</button>
+        </div>
+        <p class="shared-college-hint">تُستخدم فقط عند البحث عن مواد مشتركة مثل التدريب، المشروع، المختبر ومواضيع خاصة.</p>
+        <p id="sharedCollegeFeedback" class="shared-college-feedback hidden" role="status" aria-live="polite"></p>
       </div>
       <div id="addCourseForm" class="hidden add-course-form">
         <label>اسم المادة أو رقمها<input id="addCourseInput" type="text" placeholder="مثال: 1910011101 أو خوارزميات"></label>
@@ -134,24 +494,69 @@
     </section>
 
     <section id="schedulesPanel" class="panel results-panel hidden">
-      <h2>أفضل الجداول المقترحة</h2>
-      <div class="break-controls">
-        <h3>الاستراحات المتاحة</h3>
-        <p class="hint">تتحقق الاستراحة في كل أيام الحضور الوجاهي النشطة ضمن المجموعة. اليوم بلا حضور وجاهي لا يُحسب استراحة.</p>
-        <label>تصفية الجداول حسب
-          <select id="breakMode">
-            <option value="all">يجب تحقيق جميع الاستراحات المختارة</option>
-            <option value="any">يكفي تحقيق أي استراحة مختارة</option>
-          </select>
-        </label>
-        <div id="breakFilters"></div>
-        <p id="breakSummary" role="status" aria-live="polite"></p>
+      <div id="scheduleModeTabs" class="schedule-mode-tabs hidden" role="tablist" aria-label="طريقة إعداد الجدول">
+        <button type="button" class="mode-tab is-active" role="tab" id="tabAutoMode" aria-selected="true" aria-controls="autoScheduleArea" tabindex="0">
+          <span class="mode-tab-icon">⚡</span>
+          <span class="mode-tab-title">إنشاء تلقائي</span>
+        </button>
+        <button type="button" class="mode-tab" role="tab" id="tabManualMode" aria-selected="false" aria-controls="manualBuilderPanel" tabindex="-1">
+          <span class="mode-tab-icon">🛠️</span>
+          <span class="mode-tab-title">بناء يدوي</span>
+        </button>
       </div>
-      <div id="schedules"></div>
+
+      <div id="autoScheduleArea" class="auto-schedule-area">
+        <h2>أفضل الجداول المقترحة</h2>
+        <div class="break-controls">
+          <h3>الاستراحات المتاحة</h3>
+          <p class="hint">تتحقق الاستراحة في كل أيام الحضور الوجاهي النشطة ضمن المجموعة. اليوم بلا حضور وجاهي لا يُحسب استراحة.</p>
+          <label>تصفية الجداول حسب
+            <select id="breakMode">
+              <option value="all">يجب تحقيق جميع الاستراحات المختارة</option>
+              <option value="any">يكفي تحقيق أي استراحة مختارة</option>
+            </select>
+          </label>
+          <div id="breakFilters"></div>
+          <p id="breakSummary" role="status" aria-live="polite"></p>
+        </div>
+        <div id="schedules"></div>
+      </div>
+
+      <div id="manualBuilderPanel" class="manual-builder-panel hidden" role="tabpanel" aria-labelledby="tabManualMode">
+        <div class="manual-builder-header">
+          <div class="manual-progress-title-row">
+            <h2 class="manual-progress-heading" id="manualProgressHeading">بناء الجدول يدوياً</h2>
+            <button type="button" class="btn-manual-reset" id="btnResetManualBuilder" title="إعادة ضبط الاختيارات اليدوية">
+              <span class="reset-icon" aria-hidden="true">🔄</span>
+              <span>إعادة ضبط</span>
+            </button>
+          </div>
+          <div class="manual-progress-status-row">
+            <span class="manual-progress-text" id="manualProgressText">0 من 0 مواد تم اختيار شعبها</span>
+            <div class="manual-progress-bar-wrap" role="progressbar" id="manualProgressBar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="manual-progress-bar-fill" id="manualProgressBarFill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="manualSelectionSection" class="manual-selection-section">
+          <div class="manual-courses-selector-wrap">
+            <div class="manual-courses-selector-label" id="manualCoursesLabel">المواد المطلوبة:</div>
+            <div class="manual-courses-pills" id="manualCoursePills" role="tablist" aria-labelledby="manualCoursesLabel"></div>
+          </div>
+
+          <div id="manualGuidanceNotice" class="manual-guidance-notice hidden" role="status" aria-live="polite"></div>
+
+          <div class="manual-active-course-container" id="manualActiveCourseContainer"></div>
+        </div>
+
+        <div class="manual-timetable-preview-container" id="manualTimetableContainer"></div>
+      </div>
     </section>
   </main>
 
   <script src="smart-search.js"></script>
+  <script src="room-location-parser.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
