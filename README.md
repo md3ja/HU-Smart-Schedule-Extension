@@ -1,12 +1,13 @@
+<!-- Release-Gated Draft: Pre-release offline draft for HU Smart Schedule v1.5.0. Pending formal release authorization. -->
 # HU Smart Schedule
 
 **Build smarter university schedules.**
 
-A fast course schedule planner with automatic conflict detection, flexible preferences, Break-aware filtering, and printable schedule reports — built for Hashemite University students.
+A fast, privacy-first course schedule planner with automatic conflict detection, interactive manual building, classroom locations, flexible break preferences, and printable schedule reports — built for Hashemite University students.
 
 <p align="left">
   <img src="https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-blue.svg" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-v1.4.0-yellow.svg" alt="Version 1.4.0">
+  <img src="https://img.shields.io/badge/Version-v1.5.0-yellow.svg" alt="Version 1.5.0">
   <img src="https://img.shields.io/badge/Built%20for-HU%20Students-teal.svg" alt="Built for HU Students">
   <img src="https://img.shields.io/badge/Architecture-No%20Backend-green.svg" alt="No Backend">
   <img src="https://img.shields.io/badge/License-All%20Rights%20Reserved-lightgrey.svg" alt="All Rights Reserved">
@@ -20,200 +21,212 @@ A fast course schedule planner with automatic conflict detection, flexible prefe
 
 ## 🎬 Overview
 
-HU Smart Schedule helps students plan before registration by fetching public course-section data from Hashemite University and generating compatible weekly timetable proposals.
+HU Smart Schedule helps Hashemite University students plan their academic semester before registration opens. It fetches official public course-section data from the university portal and generates conflict-free weekly timetable proposals according to student preferences.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-v14-demo.gif" alt="HU Smart Schedule Overview" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-overview-r4.4.gif" alt="HU Smart Schedule v1.5 Overview" width="720">
 </p>
 
 ## ✨ Key Features
 
-- 🔎 **Smart Search:** Search by course number, course name, or supported shorthand.
-- ⚠️ **Conflict Detection:** Identify overlapping sections and lecture times automatically.
-- 🧩 **Schedule Generation & Ranking:** Generate compatible combinations and rank them by fewer campus days, smaller gaps, or preferred times.
-- ☕ **Break Filtering:** Filter proposals by preferred free-time windows between consecutive in-person classes.
-- ➕ **Course Management:** Add or remove courses during the same planning session without starting over.
-- 📅 **Weekly Calendar:** Review Sunday–Thursday schedules with course cards, Break indicators, off-days, and remote-class badges.
-- 🖨️ **Printable Reports:** Print or save a clean, low-ink A4 schedule report as PDF.
-- 💾 **Persistent Draft:** Your entered courses and relevant preferences are saved locally so you can continue later.
+- 🔎 **Smart Multi-Attribute Search:** Lookup courses by numeric ID, official Arabic name, or common shorthand with interactive disambiguation.
+- 🧩 **Interactive Manual Builder:** Hand-pick specific course sections with live timetable previews, conflict-aware disabled states, and deadlock guidance.
+- 🏛️ **Classrooms & Delivery Modes:** Clear campus building codes and hall numbers (e.g., `ح.ب 302`, `الغربي 311`), plus blended (*مدمج*) and online lecture indicators.
+- 📅 **Dynamic 6-Day Weekly Calendar:** Flexible scheduling from Saturday through Thursday, with automatic Saturday column activation and off-campus day badges.
+- ⚠️ **Automated Conflict Detection:** Identifies overlapping lecture times across all sections and days automatically.
+- ☕ **Break-Aware Scheduling & Ranking:** Choose preferred campus day combinations, target break intervals, and rank proposals by minimum days, minimal gaps, or time preferences.
+- ➕ **Course Management & Local Drafts:** Add or remove courses seamlessly during planning sessions; saved drafts persist locally across sessions.
+- 🖨️ **Printable PDF Schedule Reports:** Export an ink-friendly, A4-formatted schedule report with academic semester metadata, daily gap breakdown, and a complete section venue directory.
+- 🔒 **Client-Side Privacy:** All schedule permutations and conflict calculations run 100% locally in your browser with zero analytics or backend tracking.
 
 ---
 
-## 🔎 Search & Preferences
+## 🔎 Smart Search
 
-Search by course number, name, or supported shorthand. Set your preferred lecture start/end limits, choose days off, and select how schedule proposals should be ranked.
-
-When a search matches multiple subjects, **Course Disambiguation** lets you choose the intended course directly.
+Enter course numbers, full Arabic course titles, or recognized English aliases. When a query matches multiple official offerings, an interactive disambiguation card allows immediate candidate selection.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-search-and-preferences.gif" alt="Search and Preferences" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-smart-search-r2.2.gif" alt="Smart Search Demonstration" width="720">
 </p>
+
+- **Numeric Code:** Direct lookup by 6-to-10 digit university course numbers (e.g., `2010042271`).
+- **Normalized Arabic Name:** Accents and common spelling variants are automatically normalized (e.g., `القيادة والمسؤولية المجتمعية`).
+- **Supported Shorthand:** Quick lookup via English aliases (e.g., `parallel`, `algo`, `os`).
+- **Interactive Disambiguation:** Displays matching candidate cards with department titles and course offering statuses. *(Note: Demonstration badges reflect fixture-backed course status).*
 
 ---
 
-## ⚠️ Sections & Conflicts
+## 🧩 Interactive Manual Builder
 
-Open **"كل الشعب والتواقيت"** to inspect announced sections, instructors, lecture times, days, and hall locations.
-
-If selected courses overlap, the **"الشعب المتعارضة"** panel shows exactly which sections and times conflict.
+Take complete manual control over section selection. Switch between **[توليد تلقائي]** (Automatic Generation) and **[بناء يدوي]** (Manual Builder) at any time.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-sections-and-conflicts.gif" alt="Sections and Conflicts" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-manual-builder.gif" alt="Manual Builder Demonstration" width="720">
 </p>
+
+- **Live Timetable Preview:** Selected sections immediately render into the weekly calendar block.
+- **Intelligent Conflict Disabling:** Incompatible sections across all remaining courses are dynamically greyed out with explicit time-conflict badges.
+- **Guidance & Deadlock Resolution:** If choices lead to zero compatible combinations, the builder provides actionable guidance to review conflicting sections or temporarily exclude a course to restore schedule viability.
+- 🔍 *Deep Dive:* [View Deadlock Recovery Guidance Screenshot](docs/screenshots/v1.5/02_deadlock_recovery_card_with_review_btn.png)
 
 ---
 
-## ☕ Break-Aware Scheduling
+## 🏛️ Classrooms & Delivery Modes
 
-Choose preferred **Break** windows and instantly filter the generated schedule proposals that match them.
-
-- **Sunday / Tuesday / Thursday (STT):** 1-hour slots starting from 08:30.
-- **Monday / Wednesday (MW):** 90-minute slots starting from 08:00.
-- **Matching modes:** Require all selected Breaks or allow any selected Break.
+View verified lecture venues, building identifiers, and instructional modalities directly in the section cards, weekly calendar blocks, and PDF exports.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-break-filter.gif" alt="Break Filtering" width="720">
+  <a href="docs/screenshots/v1.5/01_complete_sections_classroom_details.png" target="_blank">
+    <img src="docs/screenshots/v1.5/01_complete_sections_classroom_details.png" alt="Classrooms and Delivery Modes" width="720">
+  </a>
 </p>
 
-<details>
-<summary><b>Break calculation rules</b></summary>
+- **Campus Building & Room Codes:** Displays room labels from published Hashemite University course data, including `ح.ب 302` (**Al-Hussein Al-Bani Building**), `الغربي 311`, and `الباني 310`.
+- **Blended Delivery (*مدمج*):** Highlights hybrid courses combining in-person campus lectures with remote sessions.
+- **Online Meetings:** Clearly distinguishes remote evening or Microsoft Teams lectures without cluttering campus commute metrics.
 
-- A **Break** is free time between consecutive **in-person** classes on the same day.
-- Free time before the first campus class does not count as a Break.
-- Free time after the last campus class does not count as a Break.
-- Online classes do not create or extend campus Break intervals.
-- A day with no in-person classes is treated as an off-day rather than a campus day.
+---
 
-</details>
+## 📅 Dynamic 6-Day Weekly Calendar
+
+The responsive weekly calendar adapts dynamically to student registration patterns, supporting Sunday through Thursday schedules as well as Saturday courses.
+
+<p align="center">
+  <a href="docs/screenshots/v1.5/01_full_six_day_weekly_timetable_saturday.png" target="_blank">
+    <img src="docs/screenshots/v1.5/01_full_six_day_weekly_timetable_saturday.png" alt="Dynamic 6-Day Weekly Calendar" width="720">
+  </a>
+</p>
+
+- **Adaptive Saturday Support:** The Saturday column automatically reveals itself when any selected or candidate section meets on Saturday. *(Note: The timetable above illustrates an example 6-day schedule demonstrating Saturday column activation and room labeling).*
+- **Compact & Informative Blocks:** Displays course name, section number, instructor name, lecture time, and classroom code.
+- **Off-Campus Indicators:** Flags fully free days as official off-campus days (*عطلة*).
+- **Remote Evening Blocks:** Separate visual treatment for remote sessions (e.g., 18:30–19:30).
+
+---
+
+## 🖨️ Printable PDF Schedule Report
+
+Generate a clean, high-resolution timetable export formatted specifically for standard A4 printing and digital archiving. The image below displays the browser-based print preview interface with campus metrics and section venue listings.
+
+<p align="center">
+  <a href="docs/screenshots/v1.5/02_export_pdf_full_page.png" target="_blank">
+    <img src="docs/screenshots/v1.5/02_export_pdf_full_page.png" alt="Printable PDF Schedule Report Preview" width="720">
+  </a>
+</p>
+
+- **Ink-Friendly Layout:** High-contrast white background designed to minimize ink usage.
+- **Academic Header & Statistics:** Displays university semester, total credit hours, total campus days, latest finish time, and daily break summaries.
+- **Complete Venue Directory:** Includes a dedicated table listing each course, section, instructor, meeting days, lecture times, and campus hall venues.
+- 📄 *Sample Document:* [Download Sample Timetable PDF (A4)](docs/screenshots/v1.5/schedule-saturday-export.pdf) *(Illustrative single-page exported timetable document generated by the extension)*.
+
+---
+
+## ☕ Break-Aware Scheduling & Preferences
+
+Customize schedule ranking and break requirements to fit your daily campus routine:
+
+<p align="center">
+  <img src="docs/demo/hu-smart-schedule-break-filter.gif" alt="Break-aware scheduling and filtering demonstration" width="720">
+</p>
+
+<sub>Demo recorded with the v1.4 interface; the break-filtering feature remains available in v1.5.</sub>
+
+- **STT Days (Sun / Tue / Thu):** 60-minute standard lecture blocks starting at 08:30.
+- **MW Days (Mon / Wed):** 90-minute standard lecture blocks starting at 08:00.
+- **Break Rules:** Break intervals are calculated strictly between consecutive **in-person** lectures on the same campus day. Remote evening sessions and free mornings/afternoons do not count as campus break time.
+- **Ranking Priorities:** Sort generated proposals by minimum campus days, fewest total gap minutes, later start times, or earlier finish times.
 
 ---
 
 ## ➕ Course Management
 
-Use **"إدارة المواد"** to remove a course, add another one, and continue the current planning workflow without restarting your search.
+Add or remove courses during planning without starting over. Keep your selected course list and preferences in a local draft while refining your schedule.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-course-management.gif" alt="Course Management" width="720">
+  <img src="docs/demo/hu-smart-schedule-course-management.gif" alt="Adding and removing courses in Course Management" width="720">
 </p>
 
----
-
-## 📅 Weekly Calendar
-
-Each proposal is shown in a clear Sunday–Thursday timetable with:
-
-- a full time axis from morning to evening,
-- course title, section, instructor, and meeting time,
-- Break indicators,
-- off-day badges,
-- remote-class indicators.
-
-<p align="center">
-  <img src="docs/screenshots/hu-smart-schedule-weekly-calendar.png" alt="Weekly Calendar" width="720">
-</p>
-
----
-
-## 🖨️ PDF Export
-
-Print or save your preferred schedule through the browser's native print workflow.
-
-The report includes:
-
-- academic year and semester,
-- campus-day and lecture-time summary,
-- daily Break summary,
-- weekly timetable,
-- detailed course/section table,
-- clean white low-ink A4 layout.
-
-<p align="center">
-  <img src="docs/screenshots/hu-smart-schedule-pdf-export-preview.png" alt="PDF Export Preview" width="720">
-</p>
+<sub>Demo recorded with the v1.4 interface; the course-management feature remains available in v1.5.</sub>
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Open HU Smart Schedule** from the Chrome extensions toolbar.
-2. **Choose the academic year and semester.**
-3. **Enter your courses** — one course number, name, or supported shorthand per line.
-4. **Set your preferences** — lecture time limits, preferred off-days, and ranking criteria.
-5. Click **"اجلب الشعب وابنِ الجداول"**.
-6. Review **available sections and conflicts**.
-7. Optionally choose a preferred **Break** window.
-8. Pick a proposal and click **"طباعة الجدول (PDF)"** to print or save it.
+1. Open the extension popup or standalone tab.
+2. Enter your desired course numbers, names, or aliases into the search field.
+3. Select preferred class days, start/end time boundaries, and ranking preferences.
+4. Click **[بحث عن المواد والشعب]** to fetch official section data.
+5. Browse automatically generated schedule proposals, or switch to **[بناء يدوي]** to build your own.
+6. Click **[تصدير الجدول (PDF)]** to print or save your final timetable.
 
 ---
 
 ## 📦 Installation
 
-### Manual installation on Google Chrome
+HU Smart Schedule is distributed as a lightweight Chrome extension (Manifest V3).
 
-1. Download the latest package from [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases).
-2. Extract `HU-Smart-Schedule-v1.4.0.zip`.
-3. Open `chrome://extensions`.
-4. Enable **Developer mode**.
-5. Click **Load unpacked**.
-6. Select the extracted extension folder.
-7. Pin **HU Smart Schedule** to the Chrome toolbar if you want quick access.
+### Manual Installation on Google Chrome
 
-> Current release: **v1.4.0**
+1. Download the latest available release package from [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases).
+2. Extract the downloaded release ZIP file on your computer.
+3. Open Google Chrome and navigate to `chrome://extensions/`.
+4. Enable **Developer mode** using the toggle switch in the top right corner.
+5. Click **Load unpacked** in the top left corner.
+6. Select the extracted folder containing `manifest.json`.
+7. Pin **HU Smart Schedule** to your Chrome toolbar for quick access during registration planning.
+
+> **Note for developers:** If cloning this repository directly via git, select the root repository directory (where `manifest.json` resides) when clicking **Load unpacked**.
 
 ---
 
 ## 🔒 Privacy & Permissions
 
-HU Smart Schedule uses a privacy-focused architecture with local schedule processing.
+HU Smart Schedule is built with strict student privacy principles:
 
-- **No student login required:** The extension does not ask for or store university usernames or passwords.
-- **Direct HU public access:** Public section data is fetched directly from `https://hu.edu.jo/*` over HTTPS.
-- **No external backend or analytics:** No developer backend, analytics service, or tracking script is built into the extension.
-- **Local schedule processing:** Schedule generation, conflict analysis, ranking, and Break filtering run inside the browser.
-- **Local storage:** The `storage` permission is used for extension state, course drafts, and user preferences.
+- **No Backend Server:** The extension contains zero backend servers, analytics endpoints, or telemetry collection.
+- **Client-Side Processing:** Schedule permutation, conflict analysis, ranking, and PDF generation occur entirely within your browser.
+- **Local Storage Only:** The `storage` permission is used strictly on your device to remember course drafts and preference settings.
+- **Narrow Host Permission (`https://hu.edu.jo/*`):** Used exclusively to fetch public course schedule tables directly from the Hashemite University portal during active searches.
 
-See [PRIVACY.md](PRIVACY.md) for more details.
+For complete details, see [PRIVACY.md](PRIVACY.md).
 
 ---
 
 ## 🛠️ Technical Details
 
-- **Platform:** Google Chrome Extension
+- **Platform:** Google Chrome Extension (Chromium)
 - **Manifest:** Manifest V3
-- **Frontend:** HTML5, CSS3, modern JavaScript
-- **Interface:** Arabic RTL
-- **Processing:** In-browser schedule generation, ranking, and conflict detection
-- **Data source:** Hashemite University public section pages
-- **Host access:** `https://hu.edu.jo/*`
-- **Backend:** None
+- **Frontend:** Semantic HTML5, CSS3, Modern JavaScript (ES2022)
+- **Layout & Typography:** Native Arabic RTL interface with responsive design
+- **State Engine:** In-memory schedule generator and validator with CSP compliance
+- **Data Source:** Hashemite University public course section portal
+- **Required Host Permission:** `https://hu.edu.jo/*`
+- **External Dependencies:** Zero runtime framework dependencies
 
 ---
 
 ## 🆕 Current Release
 
-**Current Version:** `v1.4.0`
+**Current Version:** `v1.5.0`
 
-### Highlights
+### Key Additions & Enhancements
 
-- 🌙 Refreshed dark visual theme
-- 📅 Clearer 5-day weekly calendar
-- 🔎 Search V2 improvements and Course Disambiguation
-- 💾 Persistent course draft
-- ➕ Improved course-management workflow
-- ☕ Dynamic Break filtering
-- 🖨️ Cleaner printable schedule reports
-- ♿ Accessibility and interaction improvements
-- 🌐 More reliable HU data requests
+- 🧩 **Interactive Manual Builder:** Direct section-by-section selection with live timetable synchronization and conflict-aware guidance.
+- 🏛️ **Stage 2B Classroom & Room Parsing:** Support for campus buildings, lecture halls, and blended (*مدمج*) attendance badges.
+- 📅 **Dynamic 6-Day Weekly Calendar:** Integrated Saturday scheduling column with automatic visibility toggles.
+- 🔎 **Smart Multi-Attribute Search:** Interactive candidate disambiguation modal for partial queries and course availability badges.
+- 🖨️ **Enhanced PDF Export:** Updated A4 print layout featuring verified campus venue directories and accurate daily gap statistics.
+- ⚡ **Performance & Stability:** Zero-flicker calendar rendering and optimized memory handling for large section combinations.
 
-[View HU Smart Schedule v1.4.0 on GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases/tag/v1.4.0)
+Release history and tags: [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases)
 
 ---
 
 ## 📜 License & Usage
 
-© 2026 HU Smart Schedule. **All Rights Reserved.**
+© 2026 HU Smart Schedule. **All rights reserved.**
 
-This project is proprietary and is **not open source**. Unauthorized copying, redistribution, modification, or commercial reuse of the source code or project assets is prohibited.
+This project is proprietary and not open-source. Copying, redistributing, modifying, or using the code or project assets commercially without prior authorization is strictly prohibited.
 
 ---
 
@@ -221,192 +234,204 @@ This project is proprietary and is **not open source**. Unauthorized copying, re
 
 ## 🎬 نظرة عامة
 
-**HU Smart Schedule** أداة تساعد طلبة الجامعة الهاشمية على تخطيط جداولهم قبل التسجيل، من خلال جلب بيانات الشعب العامة من موقع الجامعة وتوليد اقتراحات جداول أسبوعية متوافقة.
+**HU Smart Schedule** أداة طلابية مصممة لمساعدة طلبة الجامعة الهاشمية على تخطيط جداولهم الدراسية بدقة وسهولة قبل بدء فترة التسجيل الرسمية. تقوم الإضافة بجلب بيانات الشعب المعلنة من بوابة الجامعة وتوليد جداول أسبوعية خالية من التعارضات وفق تفضيلات الطالب.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-v14-demo.gif" alt="نظرة عامة على HU Smart Schedule" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-overview-r4.4.gif" alt="نظرة عامة على HU Smart Schedule v1.5" width="720">
 </p>
 
 ## ✨ أهم المميزات
 
-- 🔎 **البحث الذكي:** البحث برقم المادة أو اسمها أو الاختصارات المدعومة.
-- ⚠️ **كشف التعارضات:** تحديد الشعب والمواعيد المتداخلة تلقائياً.
-- 🧩 **توليد وترتيب الجداول:** إنشاء اقتراحات جداول متوافقة وترتيبها حسب أقل أيام دوام أو أقل فراغات أو الأوقات المفضلة.
-- ☕ **فلترة Break:** فلترة الجداول حسب فترات الاستراحة المفضلة بين المحاضرات الوجاهية المتتالية.
-- ➕ **إدارة المواد:** إضافة أو حذف مادة أثناء نفس جلسة التخطيط دون البدء من جديد.
-- 📅 **الجدول الأسبوعي:** عرض أيام الأحد إلى الخميس مع بطاقات المواد والاستراحات والعطل والمحاضرات عن بُعد.
-- 🖨️ **تقارير للطباعة:** طباعة الجدول أو حفظه بصيغة PDF بتصميم A4 واضح وموفر للحبر.
-- 💾 **حفظ المسودة:** حفظ المواد المدخلة والتفضيلات ذات الصلة محلياً لاستكمال التخطيط لاحقاً.
+- 🔎 **البحث الذكي متعدد المعايير:** البحث برقم المادة أو اسمها العربي المعتمد أو اختصاراتها الشائعة مع نافذة تحديد المادة عند تشابه الأسماء.
+- 🧩 **البناء اليدوي التفاعلي للجدول:** اختيار شعب المواد شعبة تلو الأخرى مع معاينة حية ومباشرة للتقويم، وتعطيل الشعب المتعارضة تلقائياً.
+- 🏛️ **القاعات الدراسية وأنماط التدريس:** إظهار مباني الحرم الجامعي والقاعات (مثل `ح.ب 302` و`الغربي 311`) وشارات المحاضرات المدمجة والوجاهية والإلكترونية.
+- 📅 **الجدول الأسبوعي المرن (6 أيام):** دعم كامل لأيام الدوام من السبت إلى الخميس، مع إظهار تلقائي لعمود يوم السبت عند وجود شعب فيه.
+- ⚠️ **كشف التعارضات التلقائي:** فحص التداخلات الزمنية بين كافة المحاضرات والشعب بدقة لحظية.
+- ☕ **تنظيم الاستراحات وتفضيلات الترتيب:** تحديد فترات Break المطلوبة وترتيب المقترحات حسب أقل أيام دوام أو أقل فراغات أو أوقات البداية والنهاية.
+- ➕ **إدارة المواد وحفظ المسودة:** إضافة أو حذف مواد أثناء نفس جلسة التخطيط دون فقدان المدخلات، مع حفظ تلقائي للمسودة محلياً.
+- 🖨️ **تصدير وطباعة تقرير PDF:** طباعة الجدول أو تصديره بصيغة PDF بتصميم A4 واضح وموفر للحبر يتضمن إحصائيات الدوام ودليل القاعات.
+- 🔒 **خصوصية محلية كاملة:** كافة معالجات الجداول وفحص التعارضات تتم محلياً بنسبة 100% داخل المتصفح دون خوادم خلفية أو تتبع.
 
 ---
 
-## 🔎 البحث والتفضيلات
+## 🔎 البحث الذكي عن المواد
 
-ابحث برقم المادة أو اسمها أو الاختصارات المدعومة، ثم حدد وقت بداية ونهاية المحاضرات المفضل، وأيام العطلة، وطريقة ترتيب اقتراحات الجداول.
-
-إذا طابق البحث أكثر من مادة، تساعدك ميزة **تحديد المادة المقصودة** على اختيار المادة الصحيحة مباشرة.
+يتيح محرك البحث إدخال أرقام المواد، أو أسمائها العربية الكاملة، أو اختصاراتها بالإنجليزية. وعند مطابقة البحث لأكثر من مادة رسمية، تظهر نافذة تفاعلية تتيح اختيار المادة المقصودة مباشرة.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-search-and-preferences.gif" alt="البحث والتفضيلات" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-smart-search-r2.2.gif" alt="البحث الذكي وتحديد المادة المقصودة" width="720">
 </p>
+
+- **البحث برقم المادة:** إدخال رقم المادة الجامعي المكون من 6 إلى 10 أرقام (مثل `2010042271`).
+- **البحث بالاسم العربي:** دعم المعالجة الموحدة للأحرف والهمزات (مثل `القيادة والمسؤولية المجتمعية`).
+- **البحث بالاختصارات:** دعم الكلمات المفتاحية الإنجليزية للمواد (مثل `parallel` و`algo` و`os`).
+- **نافذة تحديد المادة:** استعراض بطاقات المواد المطابقة مع أسماء الكليات والأقسام وحالة طرح المادة في الفصل. *(ملاحظة: شارات العرض في النموذج التوضيحي تستند لبيانات مسجلة مسبقاً).*
 
 ---
 
-## ⚠️ الشعب والتعارضات
+## 🧩 البناء اليدوي التفاعلي للجدول
 
-افتح قسم **"كل الشعب والتواقيت"** لاستعراض الشعب المعلنة والمدرسين والأيام والأوقات والقاعات.
-
-وعند وجود تداخل، تعرض لوحة **"الشعب المتعارضة"** الشعب والمواعيد المتداخلة بشكل واضح.
+إمكانية التحكم الكامل في اختيار الشعب؛ حيث يمكن التبديل بسلاسة بين وضع **[توليد تلقائي]** ووضع **[بناء يدوي]** في أي لحظة.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-sections-and-conflicts.gif" alt="الشعب والتعارضات" width="720">
+  <img src="docs/demo/v1.5/hu-smart-schedule-v15-manual-builder.gif" alt="البناء اليدوي التفاعلي للجدول" width="720">
 </p>
+
+- **معاينة تقويم حية:** الشعبة المختارة تظهر فوراً في جدول الأسبوع.
+- **تعطيل ذكي للشعب المتعارضة:** يتم تظليل الشعب التي تتعارض مع اختياراتك السابقة باللون الرمادي مع بيان سبب التعارض بدقة.
+- **إرشادات حل التعارض وحالات الانغلاق:** في حال أدت الاختيارات لعدم وجود أي شعب متوافقة للمادة المتبقية، توفر الإضافة زراً لإعادة مراجعة الشعب أو استبعاد المادة مؤقتاً لاستكمال الجدول.
+- 🔍 *تفاصيل إضافية:* [استعراض بطاقة إرشادات حل الانغلاق](docs/screenshots/v1.5/02_deadlock_recovery_card_with_review_btn.png)
 
 ---
 
-## ☕ الجداول حسب الاستراحات
+## 🏛️ القاعات الدراسية وأنماط التدريس
 
-اختر فترات **Break** المفضلة ليتم تحديث عدد الجداول المطابقة وفلترة الاقتراحات مباشرة.
-
-- **الأحد / الثلاثاء / الخميس (STT):** فترات مدتها ساعة تبدأ من 08:30.
-- **الاثنين / الأربعاء (MW):** فترات مدتها 90 دقيقة تبدأ من 08:00.
-- **أوضاع المطابقة:** إلزامية تحقيق جميع الاستراحات المحددة أو الاكتفاء بتحقيق أي استراحة منها.
+توضيح دقيق لأماكن المحاضرات والمجمعات والقاعات الدراسية ونمط الحضور داخل بطاقات الشعب والتقويم الأسبوعي وملف الطباعة.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-break-filter.gif" alt="فلترة فترات الاستراحة" width="720">
+  <a href="docs/screenshots/v1.5/01_complete_sections_classroom_details.png" target="_blank">
+    <img src="docs/screenshots/v1.5/01_complete_sections_classroom_details.png" alt="القاعات الدراسية وأنماط التدريس" width="720">
+  </a>
 </p>
 
-<details>
-<summary><b>قواعد احتساب Break</b></summary>
+- **رموز المباني والقاعات:** عرض المواقع كما وردت في بيانات الجامعة الهاشمية، مثل `ح.ب 302` (**مبنى الحسين الباني**)، و`الغربي 311`، و`الباني 310`.
+- **التعليم المدمج (*مدمج*):** شارة تميز المواد التي تجمع بين محاضرات وجاهية ومحاضرات عن بُعد.
+- **المحاضرات الإلكترونية:** تمييز واضح للمحاضرات المسائية أو محاضرات Microsoft Teams عن المحاضرات الوجاهية.
 
-- الـ **Break** هي فترة الفراغ بين محاضرتين **وجاهيتين** متتاليتين في نفس اليوم.
-- الوقت قبل أول محاضرة وجاهية لا يُحتسب Break.
-- الوقت بعد آخر محاضرة وجاهية لا يُحتسب Break.
-- المحاضرات عن بُعد لا تنشئ أو تمدد فترات Break داخل الحرم.
-- اليوم الذي لا يحتوي على محاضرات وجاهية يُعتبر يوم عطلة وليس يوم دوام.
+---
 
-</details>
+## 📅 الجدول الأسبوعي المرن (6 أيام)
+
+تقويم أسبوعي متجاوب يعرض جدولك من الأحد إلى الخميس، أو من السبت إلى الخميس تلقائياً عند تسجيل مادة تطرح يوم السبت.
+
+<p align="center">
+  <a href="docs/screenshots/v1.5/01_full_six_day_weekly_timetable_saturday.png" target="_blank">
+    <img src="docs/screenshots/v1.5/01_full_six_day_weekly_timetable_saturday.png" alt="الجدول الأسبوعي المرن" width="720">
+  </a>
+</p>
+
+- **دعم يوم السبت التلقائي:** يظهر عمود يوم السبت تلقائياً عند اختيار شعبة تحتوي على موعد سبت دون التأثير على الجداول العادية. *(ملاحظة: الجدول المعروض هو نموذج توضيحي يبين تفعيل عمود السبت وتوزيع القاعات في التقويم الممتد لستة أيام).*
+- **بطاقات المحاضرات الواضحة:** إظهار اسم المادة، رقم الشعبة، المدرس، توقيت المحاضرة، وقاعتها.
+- **شارات أيام العطلة:** تمييز الأيام الخالية تماماً من المحاضرات الوجاهية كيوم عطلة (*عطلة*).
+- **المحاضرات المسائية:** بطاقات خاصة للمحاضرات التي تعقد في فترات المساء (مثل 18:30–19:30).
+
+---
+
+## 🖨️ تصدير وطباعة تقرير PDF
+
+تصدير تقرير جدول دراسي احترافي بحجم A4 مخصص للطباعة الورقية أو الحفظ الرقمي بتصميم موفر للحبر. تعرض الصورة أدناه واجهة معاينة الطباعة داخل المتصفح مع الإحصائيات ودليل القاعات.
+
+<p align="center">
+  <a href="docs/screenshots/v1.5/02_export_pdf_full_page.png" target="_blank">
+    <img src="docs/screenshots/v1.5/02_export_pdf_full_page.png" alt="معاينة تقرير الطباعة PDF" width="720">
+  </a>
+</p>
+
+- **تصميم أبيض مريح وموفر للحبر:** خلفية بيضاء وخطوط عربية عالية التباين لضمان أعلى جودة طباعة.
+- **بيانات الفصل والإحصائيات:** عرض الفصل الدراسي، مجموع الساعات، أيام الدوام، موعد نهاية آخر محاضرة، وإجمالي الاستراحات اليومية.
+- **دليل تفصيلي للقاعات والشعب:** جدول مفصل بأسماء المواد والمدرسين والشعب والأيام ومواعيد وقاعات المحاضرات.
+- 📄 *نموذج المستند:* [تحميل نموذج تقرير PDF للجدول (A4)](docs/screenshots/v1.5/schedule-saturday-export.pdf) *(مستند توضيحي من صفحة واحدة صادر عن أداة التصدير في الإضافة)*.
+
+---
+
+## ☕ تنظيم الاستراحات وتفضيلات الترتيب
+
+تحكم دقيق في ترتيب اقتراحات الجداول وفترات Break اليومية:
+
+<p align="center">
+  <img src="docs/demo/hu-smart-schedule-break-filter.gif" alt="استعراض فلترة الاستراحات وتفضيلات الجدول" width="720">
+</p>
+
+<sub>تم تسجيل العرض على واجهة v1.4، وميزة فلترة الاستراحات ما زالت متوفرة في v1.5.</sub>
+
+- **أيام الأحد / الثلاثاء / الخميس (STT):** فترات مدتها 60 دقيقة تبدأ من 08:30.
+- **أيام الاثنين / الأربعاء (MW):** فترات مدتها 90 دقيقة تبدأ من 08:00.
+- **قواعد احتساب Break:** تُحسب الاستراحة فقط كفترة فراغ بين محاضرتين **وجاهيتين** متتاليتين في نفس اليوم داخل الحرم الجامعي. المحاضرات عن بُعد وأوقات الفراغ الصباحية أو المسائية لا تُحتسب كفترات Break.
+- **معايير الترتيب:** ترتيب المقترحات تلقائياً حسب أقل أيام دوام، أو أقل دقائق فراغ، أو أوقات البداية المتأخرة، أو أوقات الانتهاء المبكرة.
 
 ---
 
 ## ➕ إدارة المواد
 
-من خلال **"إدارة المواد"** يمكنك حذف مادة أو إضافة مادة جديدة ومتابعة التخطيط الحالي دون الحاجة لإعادة البحث من البداية.
+يمكنك إضافة المواد أو حذفها أثناء التخطيط للجدول دون البدء من جديد، مع حفظ قائمة المواد والتفضيلات في مسودة محلية.
 
 <p align="center">
-  <img src="docs/demo/hu-smart-schedule-course-management.gif" alt="إدارة المواد" width="720">
+  <img src="docs/demo/hu-smart-schedule-course-management.gif" alt="إدارة المواد وإضافتها وحذفها" width="720">
 </p>
 
----
-
-## 📅 الجدول الأسبوعي
-
-يُعرض كل اقتراح في جدول واضح من الأحد إلى الخميس ويتضمن:
-
-- محور وقت من الصباح حتى المساء،
-- اسم المادة والشعبة والمدرس ووقت المحاضرة،
-- شارات Break،
-- شارات أيام العطلة،
-- تمييز المحاضرات عن بُعد.
-
-<p align="center">
-  <img src="docs/screenshots/hu-smart-schedule-weekly-calendar.png" alt="الجدول الأسبوعي" width="720">
-</p>
-
----
-
-## 🖨️ تصدير وطباعة PDF
-
-يمكنك طباعة الجدول أو حفظه كملف PDF باستخدام نافذة الطباعة الأصلية في المتصفح.
-
-ويتضمن التقرير:
-
-- السنة والفصل الدراسي،
-- ملخص أيام الدوام وأوقات المحاضرات،
-- ملخص فترات Break اليومية،
-- الجدول الأسبوعي،
-- جدولاً مفصلاً للمواد والشعب،
-- تصميماً أبيض واضحاً وموفراً للحبر بحجم A4.
-
-<p align="center">
-  <img src="docs/screenshots/hu-smart-schedule-pdf-export-preview.png" alt="معاينة تقرير PDF" width="720">
-</p>
+<sub>تم تسجيل العرض على واجهة v1.4، وميزة إدارة المواد ما زالت متوفرة في v1.5.</sub>
 
 ---
 
 ## 🚀 طريقة الاستخدام
 
-1. افتح **HU Smart Schedule** من شريط إضافات Chrome.
-2. اختر **السنة والفصل الدراسي**.
-3. أدخل المواد — رقم المادة أو اسمها أو الاختصار المدعوم، مادة في كل سطر.
-4. حدد **التفضيلات** مثل حدود وقت المحاضرات وأيام العطلة وطريقة ترتيب الجداول.
-5. اضغط **"اجلب الشعب وابنِ الجداول"**.
-6. راجع **الشعب المتاحة والتعارضات**.
-7. يمكنك اختيار فترة **Break** لتصفية الجداول.
-8. اختر الجدول المناسب واضغط **"طباعة الجدول (PDF)"** للطباعة أو الحفظ.
+1. افتح الإضافة من شريط المتصفح (نافذة منبثقة أو نافذة كاملة).
+2. اكتب أرقام أو أسماء المواد في حقل البحث.
+3. حدد تفضيلاتك: الأيام المفضلة، أوقات البداية والنهاية، وطريقة الترتيب.
+4. اضغط على **[بحث عن المواد والشعب]** لجلب بيانات الشعب من بوابة الجامعة.
+5. استعرض مقترحات الجداول المتولدة تلقائياً، أو انتقل إلى تبويب **[بناء يدوي]** لاختيار الشعب بنفسك.
+6. اضغط على **[تصدير الجدول (PDF)]** لطباعة جدولك أو حفظه كملف PDF.
 
 ---
 
 ## 📦 التثبيت
 
+تتوفر HU Smart Schedule كإضافة لمتصفح Google Chrome (وفق معيار Manifest V3).
+
 ### التثبيت اليدوي على Google Chrome
 
-1. حمّل أحدث ملف إصدار من [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases).
-2. فك ضغط `HU-Smart-Schedule-v1.4.0.zip`.
-3. افتح `chrome://extensions`.
-4. فعّل **Developer mode**.
-5. اضغط **Load unpacked**.
-6. اختر مجلد الإضافة بعد فك الضغط.
-7. يمكنك تثبيت أيقونة **HU Smart Schedule** في شريط Chrome للوصول السريع.
+1. حمّل أحدث حزمة إصدار متاحة من [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases).
+2. فك ضغط ملف الإصدار (ZIP) على جهازك.
+3. افتح متصفح Chrome وتوجه إلى `chrome://extensions/`.
+4. فعّل **وضع مطوّر البرامج (Developer mode)** من الزاوية العلوية.
+5. اضغط على زر **تحميل إضافة تم فك حزمتها (Load unpacked)**.
+6. اختر المجلد الناتج عن فك الضغط (الذي يحتوي مباشرة على ملف `manifest.json`).
+7. يمكنك تثبيت أيقونة **HU Smart Schedule** في شريط الأدوات للوصول السريع إليها أثناء التخطيط.
 
-> الإصدار الحالي: **v1.4.0**
+> **ملاحظة للمطورين:** في حال استنساخ المستودع مباشرة عبر Git، اختر المجلد الرئيسي للمستودع (حيث يوجد ملف `manifest.json`) عند الضغط على **Load unpacked**.
 
 ---
 
 ## 🔒 الخصوصية والصلاحيات
 
-تعتمد HU Smart Schedule على تصميم يركز على الخصوصية مع معالجة الجداول محلياً داخل المتصفح.
+صُممت HU Smart Schedule وفق أعلى معايير احترام خصوصية الطلبة:
 
-- **لا تتطلب تسجيل الدخول:** لا تطلب الإضافة اسم المستخدم أو كلمة المرور الجامعية ولا تخزنهما.
-- **اتصال مباشر بموقع الجامعة العام:** يتم جلب بيانات الشعب العامة مباشرة من `https://hu.edu.jo/*` عبر HTTPS.
-- **لا توجد خوادم خارجية أو تحليلات:** لا يوجد خادم وسيط للمطور ولا خدمات Analytics أو Tracking داخل الإضافة.
-- **معالجة محلية للجداول:** يتم توليد الجداول وفحص التعارضات والترتيب وفلترة Break داخل المتصفح.
-- **تخزين محلي:** تُستخدم صلاحية `storage` لحفظ حالة الإضافة ومسودة المواد وتفضيلات المستخدم.
+- **لا يوجد خادم خلفي (Backend):** الإضافة لا تتصل بأي خوادم خارجية خاصة أو أدوات تتبع أو تحليلات.
+- **معالجة محلية للجداول:** يتم توليد الجداول وفحص التعارضات والترتيب والطباعة داخل متصفحك مباشرة.
+- **تخزين محلي:** تُستخدم صلاحية `storage` حصرياً على جهازك لحفظ مسودة المواد والتفضيلات بين الجلسات.
+- **صلاحية النطاق (`https://hu.edu.jo/*`):** تُستخدم فقط للاتصال المباشر ببوابة الجامعة العامة لجلب بيانات الشعب أثناء البحث.
 
-للمزيد راجع [PRIVACY.md](PRIVACY.md).
+للمزيد من التفاصيل، راجع [PRIVACY.md](PRIVACY.md).
 
 ---
 
 ## 🛠️ التفاصيل التقنية
 
-- **المنصة:** إضافة Google Chrome
+- **المنصة:** إضافة متصفح Google Chrome (Chromium)
 - **Manifest:** Manifest V3
-- **الواجهة:** HTML5 وCSS3 وJavaScript
-- **اللغة والتخطيط:** واجهة عربية RTL
-- **المعالجة:** توليد وترتيب الجداول وكشف التعارضات داخل المتصفح
-- **مصدر البيانات:** صفحات الشعب العامة للجامعة الهاشمية
+- **الواجهة:** HTML5 الدلالي، CSS3، وجافاسكريبت الحديثة (ES2022)
+- **التخطيط:** واجهة عربية أصيلة من اليمين إلى اليسار (RTL) متجاوبة
+- **محرك الحسابات:** خوارزميات توليد وفحص تعارضات محلية متوافقة مع سياسة أمان المحتوى (CSP)
+- **مصدر البيانات:** بوابة الشعب العامة للجامعة الهاشمية
 - **صلاحية الموقع:** `https://hu.edu.jo/*`
-- **Backend:** لا يوجد
+- **الاعتماديات:** بدون أي أطر عمل خارجية (Vanilla Web Standards)
 
 ---
 
 ## 🆕 الإصدار الحالي
 
-**الإصدار الحالي:** `v1.4.0`
+**الإصدار:** `v1.5.0`
 
-### أبرز التحديثات
+### أبرز التحديثات في هذا الإصدار
 
-- 🌙 ثيم داكن محدث
-- 📅 تقويم أسبوعي خماسي أوضح
-- 🔎 تحسينات Search V2 وتحديد المادة المقصودة
-- 💾 حفظ تلقائي لمسودة المواد
-- ➕ تحسين إدارة المواد أثناء التخطيط
-- ☕ فلترة تفاعلية لفترات Break
-- 🖨️ تقارير طباعة أكثر وضوحاً
-- ♿ تحسينات إمكانية الوصول والتفاعل
-- 🌐 اتصال أكثر موثوقية ببيانات الجامعة العامة
+- 🧩 **البناء اليدوي التفاعلي:** اختيار الشعب يدوياً خطوة بخطوة مع مزامنة لحظية للتقويم وإرشادات التعارض.
+- 🏛️ **دعم القاعات والمباني (Stage 2B):** إظهار قاعات المحاضرات والمجمعات وشارات التعليم المدمج (*مدمج*).
+- 📅 **الجدول الأسبوعي المرن (6 أيام):** دعم دوام يوم السبت مع تفعيل تلقائي للعمود عند الحاجة.
+- 🔎 **البحث الذكي المتطور:** نافذة تفاعلية لحل تشابه أسماء المواد وإظهار شارة طرح المادة في الفصل.
+- 🖨️ **تطوير تقرير PDF للطباعة:** تنسيق طباعة A4 محسن مع دليل القاعات وإحصائيات الاستراحات المطابقة.
+- ⚡ **تحسينات الأداء:** ثبات بصري كامل للتقويم وسرعة فائقة في معالجة آلاف التباديل الممكنة.
 
-[عرض HU Smart Schedule v1.4.0 على GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases/tag/v1.4.0)
+سجل الإصدارات: [GitHub Releases](https://github.com/md3ja/HU-Smart-Schedule-Extension/releases)
 
 ---
 
@@ -414,7 +439,7 @@ This project is proprietary and is **not open source**. Unauthorized copying, re
 
 © 2026 HU Smart Schedule. **جميع الحقوق محفوظة.**
 
-هذا المشروع مملوك وليس مفتوح المصدر. يُحظر نسخ أو إعادة توزيع أو تعديل أو إعادة استخدام الشيفرة المصدرية أو أصول المشروع تجارياً دون تصريح.
+هذا المشروع مملوك وليس مفتوح المصدر. يُحظر نسخ أو إعادة توزيع أو تعديل أو استخدام الشيفرة المصدرية أو أصول المشروع لأغراض تجارية دون إذن خطي مسبق.
 
 ---
 
